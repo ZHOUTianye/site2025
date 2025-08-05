@@ -1,0 +1,497 @@
+.story-page {
+  width: 100%;
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scroll-behavior: auto; /* 改为auto，让JavaScript控制滚动 */
+  background: #000000;
+  padding: 0;
+  box-sizing: border-box;
+  /* 隐藏滚动条但保持滚动功能 */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  /* 增强滚动性能 */
+  will-change: scroll-position;
+  transform: translateZ(0); /* 启用硬件加速 */
+}
+
+/* 隐藏 WebKit 浏览器的滚动条 */
+.story-page::-webkit-scrollbar {
+  display: none;
+}
+
+
+
+.story-container {
+  width: 100%;
+  max-width: 1200px;
+  background: transparent;
+  height: 260vh;
+  margin: 0 auto;
+  position: relative;
+  margin-bottom: 100px;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+.story-content {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 60px;
+  box-sizing: border-box;
+}
+
+.chat-container {
+  max-width: 800px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.chat-bubble {
+  display: flex;
+  width: 100%;
+  animation: slideIn 0.5s ease-out;
+}
+
+.chat-bubble.left {
+  justify-content: flex-start;
+}
+
+.chat-bubble.right {
+  justify-content: flex-end;
+}
+
+.bubble-content {
+  max-width: 70%;
+  padding: 7px 15px;
+  border-radius: 20px;
+  font-size: 24px;
+  line-height: 1.4;
+  color: #ffffff;
+  font-weight: 400;
+  word-wrap: break-word;
+  position: relative;
+}
+
+.chat-bubble.left .bubble-content {
+  background: #444444;
+  border-bottom-left-radius: 6px;
+  margin-right: auto;
+}
+
+.chat-bubble.right .bubble-content {
+  background: #707070;
+  border-bottom-right-radius: 3px;
+  margin-left: auto;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.cursor {
+  color: #ffffff;
+  font-weight: normal;
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0%, 50% {
+    opacity: 1;
+  }
+  51%, 100% {
+    opacity: 0;
+  }
+}
+
+/* 响应式设计 */
+@media (max-width: 1024px) {
+  .story-container {
+    max-width: 900px;
+  }
+  
+  .story-content {
+    padding: 40px;
+  }
+  
+  .bubble-content {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .story-page {
+    padding: 10px;
+  }
+  
+  .story-content {
+    padding: 30px;
+    min-height: 400px;
+  }
+  
+  .bubble-content {
+    font-size: 18px;
+    padding: 12px 16px;
+  }
+  
+  .chat-container {
+    gap: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .story-content {
+    padding: 20px;
+  }
+  
+  .bubble-content {
+    font-size: 16px;
+    padding: 10px 14px;
+  }
+  
+  .chat-container {
+    gap: 12px;
+  }
+}
+
+/* 第二部分样式 */
+.story-second-section {
+  width: 100%;
+  height: 160vh;
+  /* min-height: 160vh; */
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 60px;
+  box-sizing: border-box;
+  /* position: sticky; */
+  /* top: 0; */
+  /* z-index: 2; */
+  /* overflow-y: auto; */
+}
+
+.second-content {
+  width: 100%;
+  max-width: 800px;
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  margin: 0 auto;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+.second-title {
+  font-size: 32px;
+  line-height: 1.6;
+  color: #ffffff;
+  font-weight: 400;
+  text-align: left;
+  margin-bottom: 40px;
+  position: relative;
+  z-index: 3;
+  margin-top: 100px;
+}
+
+/* SwiperJS轮播器样式 */
+.story-swiper-mask {
+  position: absolute;
+  top: 200px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1350px;
+  height: 500px;
+  z-index: 1;
+  margin-top: 50px;
+  overflow: hidden; /* 确保梯形不会溢出容器边界 */
+  /* 遮罩层不需要圆角和阴影 */
+}
+
+/* 梯形盒子效果 */
+.trapezoid-left,
+.trapezoid-right {
+  position: absolute;
+  top: 0;
+  width: 50%;
+  height: 100%;
+  z-index: 2;
+  background: linear-gradient(135deg, #f4c2c2 0%, #e8a1a8 100%);
+  /* 移除transition，避免与JavaScript动画冲突 */
+}
+
+.trapezoid-left {
+  left: 0;
+  clip-path: polygon(0 0, 66.67% 0, 33.33% 100%, 0 100%);
+}
+
+.trapezoid-right {
+  right: 0;
+  clip-path: polygon(66.67% 0, 100% 0, 100% 100%, 33.33% 100%);
+}
+
+.story-swiper-container {
+  width: 100%;
+  height: 100%;
+  border-radius: 0px; /* 始终保持0圆角，避免抖动 */
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  position: relative;
+  z-index: 1; /* 确保在梯形下方 */
+}
+
+.story-swiper {
+  width: 100%;
+  height: 100%;
+}
+
+/* swiper禁用状态样式 */
+.story-swiper.disabled {
+  pointer-events: none;
+}
+
+.story-swiper.disabled .slide-content {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+/* swiper启用状态样式 */
+.story-swiper.enabled {
+  pointer-events: auto;
+}
+
+.story-swiper.enabled .slide-content {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.5s ease, visibility 0s ease 0s;
+}
+
+.story-swiper .swiper-slide {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+  color: white;
+  font-weight: 400;
+}
+
+.story-swiper .swiper-slide:nth-child(1) {
+  background-image: url('/img/3-8.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.story-swiper .swiper-slide:nth-child(2) {
+  background-image: url('/img/cmu.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.story-swiper .swiper-slide:nth-child(3) {
+  background-image: url('/img/guilin.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.story-swiper .swiper-slide .slide-content {
+  text-align: center;
+  padding: 20px;
+  line-height: 1.6;
+  max-width: 80%;
+  background: rgba(0, 0, 0, 0.5); /* 半透明黑色背景确保文字可读性 */
+  border-radius: 10px;
+  backdrop-filter: blur(5px); /* 背景模糊效果 */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8); /* 文字阴影 */
+}
+
+/* 自定义pagination样式 */
+.story-swiper .swiper-pagination {
+  bottom: 30px !important;
+  transition: opacity 0.5s ease;
+}
+
+.story-swiper.disabled .swiper-pagination {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.story-swiper.enabled .swiper-pagination {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.story-swiper .swiper-pagination-bullet {
+  width: 1rem !important;
+  height: 1rem !important;
+  background: rgba(255, 255, 255, 0.4) !important;
+  opacity: 1 !important;
+  transition: all 0.3s ease;
+  position: relative !important;
+  overflow: hidden !important;
+  border-radius: 50% !important;
+}
+
+.story-swiper .swiper-pagination-bullet-active {
+  width: 3rem !important;
+  height: 1rem !important;
+  background: rgba(255, 255, 255, 0.4) !important;
+  border-radius: 0.5rem !important;
+  transform: none !important;
+}
+
+/* 进度填充条样式 */
+.story-swiper .swiper-pagination-bullet .progress-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 0%;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: inherit;
+  transition: none !important;
+  pointer-events: none;
+}
+
+/* 激活状态下的进度条 */
+.story-swiper .swiper-pagination-bullet-active .progress-fill {
+  background: #ffffff;
+  border-radius: 0.5rem 0 0 0.5rem;
+}
+
+/* 当进度条填满时，右侧也应该有圆角 */
+.story-swiper .swiper-pagination-bullet-active .progress-fill[style*="100%"] {
+  border-radius: 0.5rem !important;
+}
+
+/* 第三部分样式 - 不再需要 */
+.story-third-section {
+  display: none;
+}
+
+/* 响应式调整 */
+@media (max-width: 1024px) {
+  .second-title {
+    font-size: 28px;
+  }
+  
+  .story-second-section {
+    padding: 40px;
+  }
+  
+  .story-swiper-mask {
+    width: 930px;
+    height: 400px;
+    overflow: hidden; /* 确保梯形不会溢出容器边界 */
+  }
+  
+  /* 响应式梯形调整 */
+  .trapezoid-left {
+    clip-path: polygon(0 0, 66.67% 0, 33.33% 100%, 0 100%);
+  }
+  
+  .trapezoid-right {
+    clip-path: polygon(66.67% 0, 100% 0, 100% 100%, 33.33% 100%);
+  }
+  
+  .story-swiper .swiper-slide {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .second-title {
+    font-size: 24px;
+    margin-bottom: 30px;
+  }
+  
+  .story-second-section {
+    padding: 30px;
+  }
+  
+  .story-swiper-mask {
+    width: 630px;
+    height: 300px;
+    top: 180px;
+    overflow: hidden; /* 确保梯形不会溢出容器边界 */
+  }
+  
+  /* 平板响应式梯形调整 */
+  .trapezoid-left {
+    clip-path: polygon(0 0, 66.67% 0, 33.33% 100%, 0 100%);
+  }
+  
+  .trapezoid-right {
+    clip-path: polygon(66.67% 0, 100% 0, 100% 100%, 33.33% 100%);
+  }
+  
+  .story-swiper .swiper-slide {
+    font-size: 18px;
+  }
+  
+  .story-swiper .swiper-pagination {
+    bottom: 25px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .second-title {
+    font-size: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .story-second-section {
+    padding: 20px;
+  }
+  
+  .story-swiper-mask {
+    width: 380px;
+    height: 250px;
+    top: 160px;
+    overflow: hidden; /* 确保梯形不会溢出容器边界 */
+  }
+  
+  /* 移动端响应式梯形调整 */
+  .trapezoid-left {
+    clip-path: polygon(0 0, 66.67% 0, 33.33% 100%, 0 100%);
+  }
+  
+  .trapezoid-right {
+    clip-path: polygon(66.67% 0, 100% 0, 100% 100%, 33.33% 100%);
+  }
+  
+  .story-swiper .swiper-slide {
+    font-size: 16px;
+  }
+  
+  .story-swiper .swiper-pagination {
+    bottom: 20px !important;
+  }
+  
+  /* 移动端保持与indicator dot一致的尺寸 */
+  .story-swiper .swiper-pagination-bullet {
+    width: 1rem !important;
+    height: 1rem !important;
+  }
+  
+  .story-swiper .swiper-pagination-bullet-active {
+    width: 3rem !important;
+    height: 1rem !important;
+  }
+}

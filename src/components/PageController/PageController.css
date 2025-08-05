@@ -1,0 +1,188 @@
+.page-controller {
+  width: 100%;
+  height: 100vh;
+  position: relative;
+}
+
+.page-wrapper {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* 全局语言切换按钮 */
+.global-language-switcher {
+  position: fixed;
+  top: 4rem;
+  right: 4rem;
+  z-index: 2000;
+  display: flex;
+  gap: 1rem;
+}
+
+.global-lang-btn {
+  background: none;
+  border: none;
+  font-size: 1.6rem;
+  color: #666666;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  transition: color 0.3s ease;
+}
+
+.global-lang-btn:hover {
+  color: #333333;
+}
+
+/* 页面指示器 */
+.page-indicator {
+  position: fixed;
+  right: 3rem;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* 在黑色背景下的单个indicator dot样式 */
+.indicator-dot.dark-dot {
+  background-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.indicator-dot.dark-dot.active {
+  background-color: #ffffff !important;
+}
+
+.indicator-dot.dark-dot:hover {
+  background-color: rgba(255, 255, 255, 0.6) !important;
+}
+
+.indicator-dot.dark-dot.personality-capsule,
+.indicator-dot.dark-dot.story-capsule,
+.indicator-dot.dark-dot.gallery-capsule {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+.indicator-dot.dark-dot.personality-capsule:hover,
+.indicator-dot.dark-dot.story-capsule:hover,
+.indicator-dot.dark-dot.gallery-capsule:hover {
+  background-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.capsule-progress.dark-progress {
+  background-color: #ffffff !important;
+}
+
+/* 分割状态的dot样式 */
+.indicator-dot.split-dot {
+  /* 重置背景色，使用动态样式 */
+  background-color: transparent !important;
+}
+
+.indicator-dot.split-dot.personality-capsule,
+.indicator-dot.split-dot.story-capsule,
+.indicator-dot.split-dot.gallery-capsule {
+  /* 重置胶囊背景色，使用动态样式 */
+  background-color: transparent !important;
+}
+
+/* 分割状态的progress样式 */
+.capsule-progress.split-progress {
+  /* 重置背景色，使用动态样式 */
+  background-color: transparent !important;
+}
+
+/* 分割状态的hover效果 */
+.indicator-dot.split-dot:hover {
+  background: linear-gradient(to bottom, 
+    rgba(51, 51, 51, 0.6) 0%, 
+    rgba(51, 51, 51, 0.6) var(--split-percent, 50%), 
+    rgba(255, 255, 255, 0.6) var(--split-percent, 50%), 
+    rgba(255, 255, 255, 0.6) 100%) !important;
+}
+
+.indicator-dot.split-dot.personality-capsule:hover,
+.indicator-dot.split-dot.story-capsule:hover,
+.indicator-dot.split-dot.gallery-capsule:hover {
+  background: linear-gradient(to bottom, 
+    rgba(51, 51, 51, 0.3) 0%, 
+    rgba(51, 51, 51, 0.3) var(--split-percent, 50%), 
+    rgba(255, 255, 255, 0.3) var(--split-percent, 50%), 
+    rgba(255, 255, 255, 0.3) 100%) !important;
+}
+
+.indicator-dot {
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  background-color: rgba(51, 51, 51, 0.3);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.indicator-dot.active {
+  background-color: #333333;
+  transform: scale(1.2);
+}
+
+.indicator-dot:hover {
+  background-color: rgba(51, 51, 51, 0.6);
+}
+
+/* Personality、Story和Gallery页面胶囊形状指示器 */
+.indicator-dot.personality-capsule,
+.indicator-dot.story-capsule,
+.indicator-dot.gallery-capsule {
+  width: 1rem;
+  height: 3rem;
+  border-radius: 0.5rem;
+  background-color: rgba(51, 51, 51, 0.2);
+  position: relative;
+  overflow: hidden;
+  transform: scale(1);
+}
+
+/* .indicator-dot.personality-capsule:hover,
+.indicator-dot.story-capsule:hover {
+  background-color: rgba(51, 51, 51, 0.3) !important;
+} */
+
+.indicator-dot.story-capsule.active,
+.indicator-dot.gallery-capsule.active {
+  background-color: #333333 !important;
+}
+
+.capsule-progress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: #333333;
+  transition: height 0.1s ease-out;
+  border-radius: 0.5rem 0.5rem 0 0;
+}
+
+/* 当胶囊填满时，底部也应该有圆角 */
+.indicator-dot.personality-capsule .capsule-progress[style*="100%"],
+.indicator-dot.story-capsule .capsule-progress[style*="100%"],
+.indicator-dot.gallery-capsule .capsule-progress[style*="100%"] {
+  border-radius: 0.5rem;
+}
+
+/* 响应式设计 */
+@media (max-width: 1440px) {
+  .global-language-switcher {
+    top: 2rem;
+    right: 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .global-lang-btn {
+    font-size: 1.4rem;
+  }
+} 

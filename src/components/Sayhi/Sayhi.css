@@ -1,0 +1,226 @@
+.sayhi-container {
+  width: 100%;
+  max-width: 1440px;
+  height: 100vh;
+  margin: 0 auto;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 0 4rem;
+  background-color: #ffffff;
+  color: #333333;
+}
+
+/* 主要内容区域 */
+.sayhi-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+  gap: 4rem;
+}
+
+.sayhi-title {
+  font-size: 3.5rem; /* 想要了解我 3.5rem */
+  font-weight: 300;
+  margin: 0;
+  color: #333333;
+  line-height: 1.2;
+}
+
+/* 3D圆脸容器 */
+.face-container {
+  position: relative;
+  width: 20rem;
+  height: 20rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.sayhi-instruction {
+  font-size: 2.5rem; /* 拖动小黄脸，摇头或是点头... 2.5rem */
+  color: #666666;
+  margin: 0;
+  line-height: 1.2;
+  font-weight: 200;
+}
+
+/* 打字机光标动画 */
+.typewriter-cursor {
+  animation: blink 1s infinite;
+  color: #333333;
+}
+
+@keyframes blink {
+  0%, 50% {
+    opacity: 1;
+  }
+  51%, 100% {
+    opacity: 0;
+  }
+}
+
+/* 个人信息界面样式 */
+.personal-info-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+  gap: 2rem;
+  font-family: 'HYRunYuan', sans-serif;
+}
+
+.info-line {
+  font-size: 6.5rem;
+  color: #333333;
+  margin: 0;
+  line-height: 1.2;
+  font-weight: 300;
+  opacity: 0;
+  /* 初始状态，动画通过类名控制 */
+}
+
+/* 为每行添加不同的延迟，形成连续浮入效果 */
+.info-line-1 {
+  animation-delay: 0.2s;
+}
+
+.info-line-2 {
+  animation-delay: 0.4s;
+}
+
+.info-line-3 {
+  animation-delay: 0.6s;
+}
+
+.info-line-4 {
+  animation-delay: 0.8s;
+}
+
+.info-line-5 {
+  animation-delay: 1.0s;
+}
+
+/* "了解更多" 特殊样式 - 与欢迎页按钮完全一致 */
+.learn-more {
+  font-size: 2.5rem !important;
+  color: #666666;
+  margin-top: 2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  padding-bottom: 1.5rem;
+}
+
+/* 添加与欢迎页完全相同的下划线效果 */
+.learn-more::after {
+  content: '';
+  position: absolute;
+  bottom: 0; /* 与欢迎页一致：紧贴文字底部 */
+  left: 50%;
+  width: 0;
+  height: 2px; /* 与欢迎页一致：2px高度 */
+  background-color: #333333; /* 与欢迎页一致：深灰色 */
+  transition: all 0.3s ease; /* 与欢迎页一致：0.3s过渡 */
+  transform: translateX(-50%);
+}
+
+.learn-more:hover::after {
+  width: 110%; /* 与欢迎页一致：80%宽度 */
+}
+
+/* 向下沉入动画 */
+@keyframes slideDownFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 向上浮入动画 */
+@keyframes slideUpFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 动画方向控制类 */
+.info-line.slide-up {
+  animation: slideUpFadeIn 2s ease-out forwards;
+}
+
+.info-line.slide-down {
+  animation: slideDownFadeIn 2s ease-out forwards;
+}
+
+/* 在动画定义之后重新定义hover效果，确保能覆盖动画的transform */
+.info-line.learn-more:hover {
+  color: #000000 !important; /* 与欢迎页一致：hover时变为纯黑 */
+  transform: translateY(-2px) !important; /* 与欢迎页一致：向上浮动2px */
+}
+
+/* 响应式设计 */
+@media (max-width: 1440px) {
+  .sayhi-container {
+    padding: 0 2rem;
+  }
+  
+  .sayhi-title {
+    font-size: 3rem;
+  }
+  
+  .sayhi-instruction {
+    font-size: 2rem;
+  }
+  
+  .info-line {
+    font-size: 5rem;
+  }
+  
+  .learn-more {
+    font-size: 2rem !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .sayhi-title {
+    font-size: 2.5rem;
+  }
+  
+  .sayhi-instruction {
+    font-size: 1.8rem;
+  }
+  
+  .face-container {
+    width: 15rem;
+    height: 15rem;
+  }
+  
+  .info-line {
+    font-size: 3.5rem;
+  }
+  
+  .learn-more {
+    font-size: 1.5rem !important;
+  }
+  
+  .personal-info-content {
+    gap: 1.5rem;
+  }
+}
+
+ 

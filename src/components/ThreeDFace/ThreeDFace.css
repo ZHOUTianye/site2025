@@ -1,0 +1,36 @@
+.three-d-face {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: grab;
+  user-select: none;
+  position: relative;
+}
+
+.three-d-face.dragging {
+  cursor: grabbing;
+}
+
+.three-d-face.disabled {
+  cursor: default;
+  position: relative;
+}
+
+.three-d-face canvas {
+  border-radius: 50%;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease, transform 0.1s ease;
+  position: relative;
+}
+
+.three-d-face:hover canvas {
+  box-shadow: 0 6px 30px rgba(255, 215, 0, 0.3);
+}
+
+.three-d-face.disabled:hover canvas {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.three-d-face.dragging canvas {
+  box-shadow: 0 8px 40px rgba(255, 215, 0, 0.5);
+} 

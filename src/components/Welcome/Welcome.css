@@ -1,0 +1,146 @@
+.welcome-container {
+  width: 100%;
+  max-width: 1440px;
+  height: 100vh;
+  margin: 0 auto;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 0 4rem;
+  background-color: #ffffff;
+  color: #333333;
+}
+
+/* 主要内容区域 */
+.main-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+}
+
+/* 欢迎文字区域 */
+.welcome-text {
+  margin-bottom: 8rem;
+}
+
+.welcome-title {
+  font-size: 6.5rem; /* 欢迎文字6.5rem */
+  font-weight: 300;
+  margin: 0 0 2rem 0;
+  line-height: 1.2;
+  min-height: 8rem; /* 确保高度稳定 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000000;
+}
+
+.subtitle {
+  font-size: 5rem; /* 这里是周天野的主页5rem */
+  font-weight: 200;
+  margin: 0;
+  color: #666666;
+  line-height: 1.2;
+}
+
+/* 打字机光标动画 */
+.cursor {
+  animation: blink 1s infinite;
+  color: #333333;
+}
+
+@keyframes blink {
+  0%, 50% {
+    opacity: 1;
+  }
+  51%, 100% {
+    opacity: 0;
+  }
+}
+
+/* 导航按钮 */
+.navigation-buttons {
+  display: flex;
+  gap: 4rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.nav-btn {
+  background: none;
+  border: none;
+  font-size: 2rem; /* 按钮字体2rem */
+  font-family: 'HYRunYuan', sans-serif;
+  color: #333333;
+  cursor: pointer;
+  padding: 1.5rem 2rem;
+  transition: all 0.3s ease;
+  position: relative;
+  white-space: nowrap;
+}
+
+.nav-btn:hover {
+  color: #000000;
+  transform: translateY(-2px);
+}
+
+.nav-btn::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background-color: #333333;
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
+}
+
+.nav-btn:hover::after {
+  width: 80%;
+}
+
+/* 响应式设计 */
+@media (max-width: 1440px) {
+  .welcome-container {
+    padding: 0 2rem;
+  }
+  
+  .welcome-title {
+    font-size: 5.5rem;
+  }
+  
+  .subtitle {
+    font-size: 4rem;
+  }
+  
+  .navigation-buttons {
+    gap: 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .welcome-title {
+    font-size: 4rem;
+    min-height: 5rem;
+  }
+  
+  .subtitle {
+    font-size: 3rem;
+  }
+  
+  .nav-btn {
+    font-size: 1.6rem;
+  }
+  
+  .navigation-buttons {
+    gap: 1.5rem;
+    flex-direction: column;
+    align-items: center;
+  }
+} 

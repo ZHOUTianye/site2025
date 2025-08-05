@@ -1,0 +1,343 @@
+.gallery-page {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #000000;
+  padding: 0 40px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.gallery-container {
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+}
+
+/* 分割线 */
+.gallery-divider {
+  height: 100%;
+  width: 1px;
+  background: #aaaaaa;
+}
+
+/* 大屏幕时固定宽度为85% */
+@media (min-width: 1200px) {
+  .gallery-container {
+    width: 90%;
+  }
+}
+
+/* 页面标题 */
+.gallery-header {
+  text-align: center;
+  margin-top: 100px;
+  margin-bottom: 10px;
+}
+
+.gallery-title {
+  font-size: 32px;
+  line-height: 1.6;
+  color: #ffffff;
+  font-weight: 300;
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+
+
+
+/* 照片墙主体 */
+.photo-wall {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  gap: 40px;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 左侧缩略图网格 */
+.thumbnail-grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  gap: 12px;
+  aspect-ratio: 1.25;
+  max-width: 50%;
+  /* width: 40%;
+  margin-right:10%; */
+  /* width:50%; */
+
+}
+
+.thumbnail-item {
+  position: relative;
+  /* border-radius: 8px; */
+  cursor: pointer;
+  transition: all 0.3s ease;
+  overflow: hidden;
+  aspect-ratio: 3 / 2;
+  filter: grayscale(100%);
+  margin-left: 10%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.thumbnail-item:hover {
+  filter: grayscale(0%);
+  transform: scale(1.02);
+}
+
+/* 缩略图中间的"+"号 */
+.thumbnail-plus {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 10px;
+  font-weight: 600;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.thumbnail-item:hover .thumbnail-plus {
+  opacity: 1;
+}
+
+/* 右侧大图显示 */
+.main-display {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 35%;
+  margin-right: 5%;
+  aspect-ratio: 3 / 2;
+  position: relative;
+  overflow: hidden;
+}
+
+.main-image {
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  /* border-radius: 20px; */
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  /* transition: all 1s ease; */
+  transform-style: preserve-3d;
+  perspective: 1000px;
+  z-index: 1; /* 当前页（底层，线没扫过的区域） */
+}
+
+/* 新图层 - 显示下一页（线扫过的区域） */
+.new-page-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  pointer-events: none;
+  /* 初始状态：没有可见区域 */
+  clip-path: polygon(100% 100%, 100% 100%, 100% 100%);
+}
+
+/* 扫线动画 */
+.new-page-layer.sweeping {
+  animation: lineSweep 0.3s linear forwards;
+}
+
+/* 线从右下角扫向左上角 */
+@keyframes lineSweep {
+  0% {
+    /* 起点：右下角一个点，没有可见区域 */
+    clip-path: polygon(100% 100%, 100% 100%, 100% 100%, 100% 100%,100% 100%);
+  }
+  25% {
+    /* 扫过右下角小三角形 */
+    clip-path: polygon(50% 100%, 100% 50%, 100% 50%, 100% 100%,50% 100%);
+  }
+  50% {
+    /* 扫过对角线一半的三角形 */
+    clip-path: polygon(0% 100%, 100% 0%, 100% 0%, 100% 100%,0% 100%);
+  }
+  75% {
+    /* 扫过大部分区域的梯形 */
+    clip-path: polygon(0% 50%, 50% 0%,100% 0%, 100% 100%,0% 100%);
+  }
+  100% {
+    /* 扫过整个区域 */
+    clip-path: polygon(0% 0%, 0% 0%, 100% 0%,100% 100%,0% 100%);
+  }
+}
+
+/* —— TV 换台失真蒙版 —— */
+.glitch-mask {
+  position: absolute;
+  top: 0; 
+  left: 0;
+  width: 100%; 
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  filter: grayscale(100%) blur(5px);
+  mix-blend-mode: normal;
+  opacity: 1;
+  z-index: 3;
+}
+
+/* 播放失真到正常的过渡 */
+.glitch-mask.tv-switch {
+  animation: tvSwitch 1s steps(4) forwards;
+}
+
+@keyframes tvSwitch {
+  0%   { 
+    filter: grayscale(100%) blur(8px);
+    opacity: 1;
+  }
+  25%  { 
+    filter: grayscale(80%) blur(6px);
+    opacity: 0.9;
+  }
+  50%  { 
+    filter: grayscale(60%) blur(3px);
+    opacity: 0.7;
+  }
+  75%  { 
+    filter: grayscale(30%) blur(1px);
+    opacity: 0.4;
+  }
+  100% { 
+    filter: none;
+    opacity: 0;
+  }
+}
+
+/* 删除大图内容样式，后续在详情页再添加 */
+
+
+/* 响应式设计 */
+@media (max-width: 1024px) {
+  .gallery-page {
+    padding: 0 30px;
+  }
+  
+  .gallery-container {
+    gap: 25px;
+  }
+  
+  .gallery-title {
+    font-size: 20px;
+  }
+  
+  .photo-wall {
+    gap: 30px;
+  }
+  
+  .thumbnail-grid {
+    max-width: 480px;
+    gap: 10px;
+  }
+  
+  .main-display {
+    width: 40%;
+    margin-right: 5%;
+  }
+  
+  .thumbnail-plus {
+    font-size: 9px;
+  }
+  
+  /* 删除大图内容响应式样式 */
+}
+
+@media (max-width: 768px) {
+  .gallery-page {
+    padding: 0 20px;
+  }
+  
+  .gallery-container {
+    gap: 20px;
+  }
+  
+  .gallery-title {
+    font-size: 18px;
+    line-height: 1.5;
+  }
+  
+  .photo-wall {
+    flex-direction: column;
+    gap: 25px;
+  }
+  
+  .thumbnail-grid {
+    max-width: 350px;
+    gap: 8px;
+  }
+  
+  .main-display {
+    width: 40%;
+    margin-right: 5%;
+  }
+  
+  .thumbnail-plus {
+    font-size: 8px;
+  }
+  
+  /* 删除大图内容响应式样式 */
+  
+  /* 删除大图内容响应式样式 */
+  
+  /* 删除计数器响应式样式 */
+  
+  /* 删除时间标记响应式样式 */
+}
+
+@media (max-width: 480px) {
+  .gallery-page {
+    padding: 0 15px;
+  }
+  
+  .gallery-title {
+    font-size: 16px;
+  }
+  
+  .thumbnail-grid {
+    max-width: 280px;
+    gap: 6px;
+  }
+  
+  .main-display {
+    width: 45%;
+    margin-right: 5%;
+  }
+  
+  .thumbnail-plus {
+    font-size: 7px;
+  }
+  
+  /* 删除大图内容响应式样式 */
+  
+  /* 删除大图内容响应式样式 */
+  
+  /* 删除计数器响应式样式 */
+  
+  /* 删除时间标记响应式样式 */
+}

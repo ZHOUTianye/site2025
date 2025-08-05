@@ -1,0 +1,364 @@
+.study-path-page {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #000000;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+.study-path-container {
+  width: 100%;
+  max-width: 1200px;
+  background: transparent;
+}
+
+.content-section {
+  display: flex;
+  min-height: 600px;
+}
+
+.text-content {
+  flex: 1;
+  padding: 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: transparent;
+  overflow: hidden;
+}
+
+.content-wrapper {
+  transition: none;
+}
+
+/* 旧内容浮出动画 */
+.content-wrapper.exit-up {
+  animation: exitUp 0.4s ease-out forwards;
+}
+
+.content-wrapper.exit-down {
+  animation: exitDown 0.4s ease-out forwards;
+}
+
+/* 新内容浮入动画 */
+.content-wrapper.enter-up {
+  animation: enterUp 0.4s ease-out forwards;
+}
+
+.content-wrapper.enter-down {
+  animation: enterDown 0.4s ease-out forwards;
+}
+
+/* 初始状态原地浮现动画 */
+.content-wrapper.fade-in {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+/* 旧内容向上浮出 */
+@keyframes exitUp {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+}
+
+/* 旧内容向下浮出 */
+@keyframes exitDown {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+}
+
+/* 新内容从下方向上浮入 */
+@keyframes enterUp {
+  0% {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* 新内容从上方向下浮入 */
+@keyframes enterDown {
+  0% {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* 原地浮现动画 */
+@keyframes fadeIn {
+  0% {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.main-content {
+  font-size: 24px;
+  line-height: 1.8;
+  color: #ffffff;
+  margin-bottom: 30px;
+  font-weight: 300;
+  letter-spacing: 0.5px;
+}
+
+.main-subtitle {
+  font-size: 16px;
+  color: #888888;
+  font-style: italic;
+}
+
+.timeline-year {
+  font-size: 48px;
+  font-weight: bold;
+  color: #ffffff;
+  margin-bottom: 20px;
+}
+
+.timeline-school {
+  font-size: 24px;
+  color: #cccccc;
+  margin-bottom: 30px;
+  font-weight: 500;
+}
+
+.timeline-description {
+  font-size: 18px;
+  line-height: 1.8;
+  color: #e0e0e0;
+  font-weight: 300;
+}
+
+.timeline-section {
+  flex: 0 0 400px;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.timeline-container {
+  position: relative;
+  height: 500px;
+  width: 100%;
+  max-width: 300px;
+}
+
+.timeline-line {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 3px;
+  height: 100%;
+  background: #666666;
+  border-radius: 2px;
+}
+
+.timeline-item {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 2;
+}
+
+.timeline-item:nth-child(2) { top: 0%; }
+.timeline-item:nth-child(3) { top: 15%; }
+.timeline-item:nth-child(4) { top: 30%; }
+.timeline-item:nth-child(5) { top: 45%; }
+.timeline-item:nth-child(6) { top: 60%; }
+.timeline-item:nth-child(7) { top: 75%; }
+.timeline-item:nth-child(8) { top: 90%; }
+
+.timeline-dot {
+  width: 16px;
+  height: 16px;
+  background: #000000;
+  border: 3px solid #ffffff;
+  border-radius: 50%;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(255, 255, 255, 0.2);
+}
+
+/* 悬浮效果 - 基础hover */
+.timeline-item:hover .timeline-dot {
+  width: 20px;
+  height: 20px;
+  border-color: #cccccc;
+  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
+}
+
+.timeline-item:hover .timeline-label {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1.05);
+}
+
+/* 选中状态效果 - 固定放大 */
+.timeline-item.selected .timeline-dot {
+  width: 20px;
+  height: 20px;
+  border-color: #cccccc;
+  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
+}
+
+.timeline-item.selected .timeline-label {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1.05);
+}
+
+.timeline-label {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  transition: all 0.3s ease;
+  opacity: 0.7;
+  width: 180px;
+  justify-content: space-between;
+  margin-left: 30px;
+  margin-top: 8px;
+}
+
+.timeline-year-label {
+  font-size: 16px;
+  font-weight: bold;
+  color: #ffffff;
+  flex-shrink: 0;
+  position: relative;
+  /* left: 60px; */
+  /* top: 10px; */
+}
+
+.timeline-school-label {
+  font-size: 12px;
+  color: #cccccc;
+  line-height: 1.3;
+  text-align: left;
+  margin-left: 40px;
+  /* margin-top: 20px; */
+  flex: 1;
+}
+
+.timeline-arrow {
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%) rotate(90deg);
+  color: #ffffff;
+}
+
+/* 响应式设计 */
+@media (max-width: 1024px) {
+  .study-path-container {
+    max-width: 900px;
+  }
+  
+  .text-content {
+    padding: 40px;
+  }
+  
+  .main-content {
+    font-size: 20px;
+  }
+  
+  .timeline-section {
+    flex: 0 0 300px;
+  }
+}
+
+@media (max-width: 768px) {
+  .study-path-page {
+    padding: 10px;
+  }
+  
+  .content-section {
+    flex-direction: column;
+    min-height: auto;
+  }
+  
+  .text-content {
+    padding: 30px;
+  }
+  
+  .main-content {
+    font-size: 18px;
+    line-height: 1.6;
+  }
+  
+  .timeline-section {
+    flex: none;
+    height: 400px;
+    padding: 30px 0;
+  }
+  
+  .timeline-container {
+    height: 300px;
+    max-width: 250px;
+  }
+  
+  .timeline-label {
+    margin-left: 30px;
+  }
+  
+  .timeline-year-label {
+    font-size: 14px;
+  }
+  
+  .timeline-school-label {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 480px) {
+  .text-content {
+    padding: 20px;
+  }
+  
+  .main-content {
+    font-size: 16px;
+  }
+  
+  .timeline-year {
+    font-size: 36px;
+  }
+  
+  .timeline-school {
+    font-size: 20px;
+  }
+  
+  .timeline-description {
+    font-size: 16px;
+  }
+}
