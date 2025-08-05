@@ -16,9 +16,26 @@
 }
 
 .firefly-dot.light {
-  background: radial-gradient(circle, rgba(255,200,0,0.9) 0%, rgba(255,200,0,0.3) 70%, rgba(255,200,0,0) 100%);
+  background: radial-gradient(circle, rgba(255,200,0,0.6) 0%, rgba(255,200,0,0.1) 70%, rgba(255,200,0,0) 100%);
 }
 
 .firefly-dot.dark {
+  background: radial-gradient(circle, rgba(255,255,200,0.2) 0%, rgba(255,255,200,0.2) 60%, rgba(255,255,200,0) 100%);
+}
+
+.firefly-swarm {
+  position: absolute;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+
+.firefly-swarm-dot {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
   background: radial-gradient(circle, rgba(255,255,200,1) 0%, rgba(255,255,200,0.4) 60%, rgba(255,255,200,0) 100%);
+  transform: translate(-50%, -50%);
 }
