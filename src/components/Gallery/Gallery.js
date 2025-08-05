@@ -51,7 +51,7 @@ function Gallery({ isActive, onScrollProgress, onBoundaryScroll }) {
       mainDisplay.appendChild(newPageLayer);
       
       // 播折痕动画
-      setTimeout(() => newPageLayer.classList.add('sweeping'), 50);
+      // setTimeout(() => newPageLayer.classList.add('sweeping'), 50);
       
       // —— 二：TV 换台失真蒙版 —— 
       const glitch = document.createElement('div');
@@ -64,10 +64,15 @@ function Gallery({ isActive, onScrollProgress, onBoundaryScroll }) {
       mainDisplay.appendChild(glitch);
       
       // 播 TV 失真
-      setTimeout(() => glitch.classList.add('tv-switch'), 100);
+      // setTimeout(() => glitch.classList.add('tv-switch'), 100);
+      setTimeout(() => {
+        newPageLayer.classList.add('sweeping');
+        glitch.classList.add('sweeping');
+      }, 50);
+      // 延迟切换图片显示，确保折痕前保留旧图
+      setTimeout(() => setCurrentImageIndex(index), 300);
 
-      // 立即切换图片显示（无延迟）
-      setCurrentImageIndex(index);
+
 
       // 动画结束后清理
       const cleanup = () => {

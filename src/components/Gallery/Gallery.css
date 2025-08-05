@@ -49,6 +49,8 @@
   font-weight: 300;
   letter-spacing: 0.5px;
   margin: 0;
+  transition: all 1s ease;
+  
 }
 
 
@@ -139,7 +141,7 @@
   left: 0;
   overflow: hidden;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-  /* transition: all 1s ease; */
+  transition: all 1s ease;
   transform-style: preserve-3d;
   perspective: 1000px;
   z-index: 1; /* 当前页（底层，线没扫过的区域） */
@@ -200,11 +202,17 @@
   mix-blend-mode: normal;
   opacity: 1;
   z-index: 3;
+  clip-path: polygon(100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%);
 }
 
 /* 播放失真到正常的过渡 */
-.glitch-mask.tv-switch {
+/* .glitch-mask.tv-switch {
   animation: tvSwitch 1s steps(4) forwards;
+} */
+
+/* 扫线+TV失真动画 */
+.glitch-mask.sweeping {
+  animation: lineSweep 0.3s linear forwards, tvSwitch 1s steps(4) forwards;
 }
 
 @keyframes tvSwitch {

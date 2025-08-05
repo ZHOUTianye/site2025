@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Loading from './components/Loading/Loading';
 import PageController from './components/PageController/PageController';
+import FireflyCursor from './components/FireflyCursor/FireflyCursor';
 import './App.css';
 
 function App() {
@@ -12,6 +13,7 @@ function App() {
 
   return (
     <div className="App">
+      <FireflyCursor />
       {isLoading ? (
         <Loading onLoadComplete={handleLoadComplete} />
       ) : (
