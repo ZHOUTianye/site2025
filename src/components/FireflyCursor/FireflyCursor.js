@@ -5,26 +5,49 @@ const MAX_TRAIL = 20;
 const IDLE_TIMEOUT = 50;
 const BASE_SIZE = 8; // cursor size while moving
 const IDLE_SIZE = 16; // cursor size when idle
+const INTERACTIVE_SIZE = 24; // size when hovering clickable areas
 const MIN_STEP = 2; // minimum growth between rings
 const MAX_STEP = 5; // cap growth for very fast movement
 const SWARM_COUNT = 6; // number of trailing groups rendered as swarm
 const MAX_SIZE = 40;
 
+// Determine if a color is dark; treat fully transparent colors as light
 function isColorDark(color) {
-  const match = color.match(/rgb[a]?\((\d+),\s*(\d+),\s*(\d+)/i);
+  const match = color.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([0-9.]+))?\)/i);
   if (!match) return false;
   const r = parseInt(match[1], 10);
   const g = parseInt(match[2], 10);
   const b = parseInt(match[3], 10);
-  // perceived luminance
+  const a = match[4] !== undefined ? parseFloat(match[4]) : 1;
+  if (a === 0) return false;
   const luminance = 0.299 * r + 0.587 * g + 0.114 * b;
   return luminance < 128;
+}
+
+// Traverse up the DOM tree to find the first non-transparent background color
+function getEffectiveBackgroundColor(element) {
+  let el = element;
+  while (el) {
+    const bg = window.getComputedStyle(el).backgroundColor;
+    const match = bg.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([0-9.]+))?\)/i);
+    if (match) {
+      const alpha = match[4] !== undefined ? parseFloat(match[4]) : 1;
+      if (alpha > 0) {
+        return bg;
+      }
+    } else if (bg && bg !== 'transparent') {
+      return bg;
+    }
+    el = el.parentElement;
+  }
+  return 'rgb(255,255,255)';
 }
 
 function FireflyCursor() {
   const [trail, setTrail] = useState([]);
   const [step, setStep] = useState(MIN_STEP);
   const [idle, setIdle] = useState(false);
+  const [interactive, setInteractive] = useState(false);
   const lastPos = useRef({ x: 0, y: 0 });
   const idleTimer = useRef(null);
 
@@ -33,9 +56,25 @@ function FireflyCursor() {
       const element = document.elementFromPoint(e.clientX, e.clientY);
       let bg = 'rgb(255,255,255)';
       if (element) {
-        bg = window.getComputedStyle(element).backgroundColor;
+        bg = getEffectiveBackgroundColor(element);
       }
-      const isDark = isColorDark(bg);
+      let isDark = isColorDark(bg);
+
+      // Special handling for Personality page's half white/half black section
+      if (element && element.closest('.all-sticky-content')) {
+        const container = element.closest('.all-sticky-content');
+        const rect = container.getBoundingClientRect();
+        const relativeY = e.clientY - rect.top;
+        isDark = relativeY > rect.height / 2;
+      }
+
+      const clickable = element && (
+        element.closest('.swiper-slide') ||
+        element.closest('.story-swiper-container') ||
+        element.closest('.thumbnail-item') ||
+        element.closest('.main-image')
+      );
+      setInteractive(!!clickable);
 
       const dx = e.clientX - lastPos.current.x;
       const dy = e.clientY - lastPos.current.y;
@@ -45,8 +84,14 @@ function FireflyCursor() {
       lastPos.current = { x: e.clientX, y: e.clientY };
 
       setTrail(prev => {
-        const next = [{ x: e.clientX, y: e.clientY, dark: isDark }, ...(isDark ? prev : [])];
-        return next.slice(0, isDark ? MAX_TRAIL : 1);
+        const point = { x: e.clientX, y: e.clientY, dark: isDark };
+        if (clickable) {
+          return [point];
+        }
+        if (isDark) {
+          return [point, ...prev].slice(0, MAX_TRAIL);
+        }
+        return [point];
       });
 
       setIdle(false);
@@ -69,11 +114,15 @@ function FireflyCursor() {
   return (
     <div className="firefly-container">
       {trail.map((p, idx) => {
-        const baseSize = idle && idx === 0 ? IDLE_SIZE : BASE_SIZE;
+        const baseSize = interactive
+          ? INTERACTIVE_SIZE
+          : idle && idx === 0
+            ? IDLE_SIZE
+            : BASE_SIZE;
         const rawSize = baseSize + idx * step;
         const size = Math.min(rawSize, MAX_SIZE);
         const opacity = 1 - idx / MAX_TRAIL;
-        const isSwarm = p.dark && idx >= trail.length - SWARM_COUNT && idx !== 0;
+        const isSwarm = !interactive && p.dark && idx >= trail.length - SWARM_COUNT && idx !== 0;
         if (isSwarm) {
           const dots = Array.from({ length: 5 });
           return (
