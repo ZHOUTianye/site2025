@@ -1,12 +1,14 @@
 import React, { useRef, useEffect, useCallback, useState } from 'react';
 import './Conclusion.css';
 
-function Conclusion() {
+function Conclusion({ onScrollProgress, onBoundaryScroll }) {
   const containerRef = useRef(null);
   const stickyContentRef = useRef(null);
   const [isPageVisible, setIsPageVisible] = useState(false);
   const [textSplitPercent, setTextSplitPercent] = useState(0); // 从黑到白，初始黑色为0%
+  const [scrollProgress, setScrollProgress] = useState(0); // 0-1，用于抽屉动画
 
+  // 更新滚动进度与分割位置
   const updateProgress = useCallback(() => {
     const container = containerRef.current;
     if (!container) return;
@@ -23,10 +25,14 @@ function Conclusion() {
     const { scrollTop, scrollHeight, clientHeight } = container;
     const maxScroll = scrollHeight - clientHeight;
     const progress = maxScroll > 0 ? scrollTop / maxScroll : 0;
+    if (onScrollProgress) {
+      onScrollProgress(progress);
+    }
+    setScrollProgress(progress);
 
     // 反向：黑 -> 白，因此白色从下半屏逐步占比增加
     const viewportHeight = window.innerHeight;
-    const whiteAreaTop = viewportHeight * progress; // 从底部往上推白色
+    const whiteAreaTop = viewportHeight * (1 - progress); // 从底部往上推白色
 
     const sticky = stickyContentRef.current;
     if (sticky) {
@@ -45,16 +51,110 @@ function Conclusion() {
         setTextSplitPercent(finalPercent);
       }
     }
-  }, [isPageVisible]);
+  }, [isPageVisible, onScrollProgress]);
+
+  // 平滑滚动到指定位置（仅用于鼠标滚轮）
+  const animationRef = useRef(null);
+  const smoothScrollTo = useCallback((targetY) => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const startY = container.scrollTop;
+    const distance = targetY - startY;
+    const duration = 400;
+    let startTime = null;
+
+    const animate = (currentTime) => {
+      if (startTime === null) startTime = currentTime;
+      const timeElapsed = currentTime - startTime;
+      const progress = Math.min(timeElapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 2);
+      container.scrollTop = startY + distance * eased;
+      updateProgress();
+      if (progress < 1) {
+        animationRef.current = requestAnimationFrame(animate);
+      }
+    };
+
+    if (animationRef.current) cancelAnimationFrame(animationRef.current);
+    animationRef.current = requestAnimationFrame(animate);
+  }, [updateProgress]);
+
+  // 触控板边界检测（通过scroll事件）
+  const handleTouchpadBoundary = useCallback(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    const { scrollTop, scrollHeight, clientHeight } = container;
+    const isAtTop = scrollTop === 0;
+    const isAtBottom = scrollTop + clientHeight >= scrollHeight - 1;
+    container.dataset.atTop = isAtTop;
+    container.dataset.atBottom = isAtBottom;
+  }, []);
+
+  // 快速设备检测（仅用于鼠标滚轮）
+  const isMouseWheel = useCallback((event) => {
+    const normalizedDeltaY = event.deltaMode === 1
+      ? event.deltaY * 16
+      : event.deltaMode === 2
+        ? event.deltaY * window.innerHeight
+        : event.deltaY;
+    const absDeltaY = Math.abs(normalizedDeltaY);
+    const absDeltaX = Math.abs(event.deltaX);
+    return absDeltaX === 0 && (absDeltaY >= 100 || absDeltaY % 120 === 0 || event.deltaMode === 1);
+  }, []);
+
+  // 专门处理触控板：到边界时交给上层翻页
+  const handleTouchpadWheel = useCallback((event) => {
+    const container = containerRef.current;
+    if (!container) return;
+    const deltaY = event.deltaY;
+    const isAtTop = container.dataset.atTop === 'true';
+    const isAtBottom = container.dataset.atBottom === 'true';
+    if ((isAtTop && deltaY < 0) || (isAtBottom && deltaY > 0)) {
+      event.preventDefault();
+      if (onBoundaryScroll) onBoundaryScroll(deltaY > 0 ? 'down' : 'up');
+    }
+  }, [onBoundaryScroll]);
+
+  // 专门处理鼠标滚轮：平滑滚动，到边界触发翻页
+  const handleMouseWheel = useCallback((event) => {
+    const container = containerRef.current;
+    if (!container) return;
+    event.preventDefault();
+    const deltaY = event.deltaMode === 1 ? event.deltaY * 16 : event.deltaMode === 2 ? event.deltaY * window.innerHeight : event.deltaY;
+
+    const { scrollTop, scrollHeight, clientHeight } = container;
+    const isAtTop = scrollTop === 0;
+    const isAtBottom = scrollTop + clientHeight >= scrollHeight - 1;
+    if ((isAtTop && deltaY < 0) || (isAtBottom && deltaY > 0)) {
+      if (onBoundaryScroll) onBoundaryScroll(deltaY > 0 ? 'down' : 'up');
+      return;
+    }
+    const scrollAmount = deltaY * 1.2; // 略降速，提升流畅度
+    const target = Math.max(0, Math.min(scrollHeight - clientHeight, scrollTop + scrollAmount));
+    smoothScrollTo(target);
+  }, [onBoundaryScroll, smoothScrollTo]);
+
+  // 统一的wheel事件分发
+  const handleWheel = useCallback((event) => {
+    if (isMouseWheel(event)) {
+      handleMouseWheel(event);
+    } else {
+      handleTouchpadWheel(event);
+    }
+  }, [isMouseWheel, handleMouseWheel, handleTouchpadWheel]);
+  
 
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
-    const onScroll = () => updateProgress();
+    const onScroll = () => { updateProgress(); handleTouchpadBoundary(); };
     container.addEventListener('scroll', onScroll, { passive: true });
+    container.addEventListener('wheel', handleWheel, { passive: false });
     updateProgress();
+    handleTouchpadBoundary();
     return () => container.removeEventListener('scroll', onScroll);
-  }, [updateProgress]);
+  }, [updateProgress, handleWheel, handleTouchpadBoundary]);
 
   return (
     <div className="conclusion-container" ref={containerRef}>
@@ -92,10 +192,74 @@ function Conclusion() {
               </div>
             </div>
           </div>
+          <div className="hero-block">
+            <h1 className="hero-title">心在旷野</h1>
+            <div className="hero-subtitle">天苍苍，野茫茫<br />风吹草低见牛羊</div>
+          </div>
         </div>
 
         {/* 背景从黑到白：放在普通文流层，避免覆盖粘性内容 */}
         <div className="conclusion-all-bg" />
+      </div>
+      {/* 抽屉式底部内容 - 固定定位 */}
+      <div className="conclusion-drawer drawer-fixed">
+        <div className="drawer-fixed-inner">
+          <div
+            className="drawer-reveal"
+            style={{ clipPath: `inset(${(1 - scrollProgress) * 100}% 0 0 0)` }}
+          >
+            <div className="drawer-content">
+              <div className="drawer-toprow">
+                <div className="drawer-breadcrumb">主页</div>
+                <div className="drawer-search">
+                  <input className="drawer-search-input" placeholder="搜索tianyezhou.com" />
+                  <span className="drawer-search-icon">🔍</span>
+                </div>
+              </div>
+
+            <div className="drawer-links">
+              <div className="drawer-col">
+                <div className="drawer-col-title">关于我</div>
+                <a>我的生命钟</a>
+                <a>另一侧面的我</a>
+              </div>
+              <div className="drawer-col">
+                <div className="drawer-col-title">过往与当下</div>
+                <a>沧海拾遗</a>
+                <a>随游随想</a>
+                <a>如我所书</a>
+              </div>
+              <div className="drawer-col">
+                <div className="drawer-col-title">服务和产品</div>
+                <a>留达·简历/文书翻译修改工具</a>
+                <a>梦小媒·AI 留学小助手</a>
+              </div>
+              <div className="drawer-col">
+                <div className="drawer-col-title">快捷链接</div>
+                <a>探知拾趣-学习笔记管理系统</a>
+                <a>常备长青-行为习惯管理系统</a>
+                <a>星海航线-网页导航推荐系统</a>
+                <a>关于本站 & 无障碍</a>
+              </div>
+            </div>
+
+              <div className="drawer-info-row">
+                <div className="drawer-info-left">周天野的个人主页</div>
+                <div className="drawer-info-right">QQ 微信 领英 脸书 ig icon</div>
+              </div>
+
+              <div className="drawer-legalbar">
+                <div className="drawer-copy">版权所有 © 2023-2025 周天野</div>
+                <div className="drawer-legal-links">
+                  <a>联系我们</a>
+                  <a>隐私政策</a>
+                  <a>使用条款</a>
+                  <a>Cookies</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
