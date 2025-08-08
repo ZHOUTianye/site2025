@@ -228,7 +228,19 @@ const PageController = () => {
       return; // 防抖和防止过渡期间触发
     }
 
-    const deltaY = event.deltaY;
+    // 统一各浏览器的滚轮单位：
+    // deltaMode === 0: 像素；1: 行；2: 页
+    const normalizeWheelDeltaY = (e) => {
+      if (e.deltaMode === 1) {
+        return e.deltaY * 16; // 近似每行16px
+      }
+      if (e.deltaMode === 2) {
+        return e.deltaY * window.innerHeight; // 以一页高度估算
+      }
+      return e.deltaY;
+    };
+
+    const deltaY = normalizeWheelDeltaY(event);
     const maxAccessiblePage = getAccessiblePageCount() - 1;
     
     // 检查滚动速度是否超过阈值

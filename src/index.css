@@ -38,3 +38,14 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* 仅当 html 带有 hide-native-cursor 类时，隐藏系统指针（非 Chrome 浏览器使用） */
+html.hide-native-cursor body {
+  cursor: none !important;
+}
+
+html.hide-native-cursor *,
+html.hide-native-cursor *::before,
+html.hide-native-cursor *::after {
+  cursor: none !important;
+}

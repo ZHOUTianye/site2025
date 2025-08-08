@@ -274,7 +274,12 @@ function Story({ isActive, onScrollProgress, onBoundaryScroll }) {
 
   // 快速设备检测（仅用于鼠标滚轮）
   const isMouseWheel = useCallback((event) => {
-    const absDeltaY = Math.abs(event.deltaY);
+    const normalizedDeltaY = event.deltaMode === 1
+      ? event.deltaY * 16
+      : event.deltaMode === 2
+        ? event.deltaY * window.innerHeight
+        : event.deltaY;
+    const absDeltaY = Math.abs(normalizedDeltaY);
     const absDeltaX = Math.abs(event.deltaX);
     
     // 鼠标滚轮特征：
@@ -326,7 +331,11 @@ function Story({ isActive, onScrollProgress, onBoundaryScroll }) {
     
     event.preventDefault();
     
-    const deltaY = event.deltaY;
+    const deltaY = event.deltaMode === 1
+      ? event.deltaY * 16
+      : event.deltaMode === 2
+        ? event.deltaY * window.innerHeight
+        : event.deltaY;
     
     // 检查边界
     const { scrollTop, scrollHeight, clientHeight } = container;

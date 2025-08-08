@@ -51,6 +51,20 @@ function FireflyCursor() {
   const lastPos = useRef({ x: 0, y: 0 });
   const idleTimer = useRef(null);
 
+  // 非 Chrome 浏览器隐藏系统指针：通过类名控制样式
+  useEffect(() => {
+    const ua = navigator.userAgent.toLowerCase();
+    const isChrome = /chrome\//.test(ua) && !/edg\//.test(ua) && !/opr\//.test(ua);
+    if (!isChrome) {
+      document.documentElement.classList.add('hide-native-cursor');
+    } else {
+      document.documentElement.classList.remove('hide-native-cursor');
+    }
+    return () => {
+      document.documentElement.classList.remove('hide-native-cursor');
+    };
+  }, []);
+
   useEffect(() => {
     const handleMove = (e) => {
       const element = document.elementFromPoint(e.clientX, e.clientY);
@@ -61,11 +75,18 @@ function FireflyCursor() {
       let isDark = isColorDark(bg);
 
       // Special handling for Personality page's half white/half black section
-      if (element && element.closest('.all-sticky-content')) {
-        const container = element.closest('.all-sticky-content');
-        const rect = container.getBoundingClientRect();
-        const relativeY = e.clientY - rect.top;
-        isDark = relativeY > rect.height / 2;
+      const personalityBg = document.querySelector('.all-sticky-content');
+      if (personalityBg) {
+        const rect = personalityBg.getBoundingClientRect();
+        if (
+          e.clientX >= rect.left &&
+          e.clientX <= rect.right &&
+          e.clientY >= rect.top &&
+          e.clientY <= rect.bottom
+        ) {
+          const relativeY = e.clientY - rect.top;
+          isDark = relativeY > rect.height / 2;
+        }
       }
 
       const clickable = element && (
@@ -102,9 +123,36 @@ function FireflyCursor() {
       }, IDLE_TIMEOUT);
     };
 
+    const handleMouseOut = (e) => {
+      // 当鼠标离开窗口（relatedTarget 为 null）时，隐藏自定义指针
+      if (!e.relatedTarget) {
+        setTrail([]);
+        setIdle(true);
+      }
+    };
+
+    const handleWindowBlur = () => {
+      // 页面失焦（切换标签或最小化）时隐藏
+      setTrail([]);
+      setIdle(true);
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        setTrail([]);
+        setIdle(true);
+      }
+    };
+
     window.addEventListener('mousemove', handleMove);
+    window.addEventListener('mouseout', handleMouseOut);
+    window.addEventListener('blur', handleWindowBlur);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
     return () => {
       window.removeEventListener('mousemove', handleMove);
+      window.removeEventListener('mouseout', handleMouseOut);
+      window.removeEventListener('blur', handleWindowBlur);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
       if (idleTimer.current) clearTimeout(idleTimer.current);
     };
   }, []);

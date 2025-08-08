@@ -167,7 +167,13 @@ const Personality = ({ onBoundaryScroll, onScrollProgress }) => {
 
   // 快速设备检测（仅用于鼠标滚轮）
   const isMouseWheel = useCallback((event) => {
-    const absDeltaY = Math.abs(event.deltaY);
+    // 统一 delta 值，避免 Firefox 的行/页单位带来的误判
+    const normalizedDeltaY = event.deltaMode === 1
+      ? event.deltaY * 16
+      : event.deltaMode === 2
+        ? event.deltaY * window.innerHeight
+        : event.deltaY;
+    const absDeltaY = Math.abs(normalizedDeltaY);
     const absDeltaX = Math.abs(event.deltaX);
     
     // 鼠标滚轮特征：
@@ -219,7 +225,11 @@ const Personality = ({ onBoundaryScroll, onScrollProgress }) => {
     
     event.preventDefault();
     
-    const deltaY = event.deltaY;
+    const deltaY = event.deltaMode === 1
+      ? event.deltaY * 16
+      : event.deltaMode === 2
+        ? event.deltaY * window.innerHeight
+        : event.deltaY;
     
     // 检查边界
     const { scrollTop, scrollHeight, clientHeight } = container;
