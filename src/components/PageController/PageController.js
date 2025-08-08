@@ -6,6 +6,7 @@ import StudyPath from '../StudyPath/StudyPath';
 import Learning from '../Learning/Learning';
 import Story from '../Story/Story';
 import Gallery from '../Gallery/Gallery';
+import Conclusion from '../Conclusion/Conclusion';
 import './PageController.css';
 
 const PageController = () => {
@@ -64,8 +65,8 @@ const PageController = () => {
     // 只有Personality页面（索引2）需要分割效果
     if (currentPage !== 2) {
       // 其他页面使用固定样式
-      // StudyPath（索引3）、Learning（索引4）、Story（索引5）是黑色背景页面，Gallery（索引6）是浅色背景页面
-      const isBlackBackgroundPage = currentPage === 3 || currentPage === 4 || currentPage === 5;
+      // StudyPath（索引3）、Learning（索引4）、Story（索引5）、Gallery（索引6）均为深色背景页面
+      const isBlackBackgroundPage = currentPage === 3 || currentPage === 4 || currentPage === 5 || currentPage === 6;
       
       if (isBlackBackgroundPage) {
         return { type: 'solid', color: 'black', splitPercent: 0 };
@@ -129,7 +130,7 @@ const PageController = () => {
     if (!hasSelectedAction) {
       return 2; // 只显示Welcome和Sayhi页面
     }
-    return 7; // 显示所有页面 (Welcome, Sayhi, Personality, StudyPath, Learning, Story, Gallery)
+    return 8; // 显示所有页面 (Welcome, Sayhi, Personality, StudyPath, Learning, Story, Gallery, Conclusion)
   }, [hasSelectedAction]);
 
   // 处理Personality页面的边界滚动
@@ -212,12 +213,16 @@ const PageController = () => {
         onBoundaryScroll={handleGalleryBoundaryScroll}
       />, 
       name: 'gallery'
+    },
+    {
+      component: <Conclusion />, 
+      name: 'conclusion'
     }
   ];
 
   const handleWheel = useCallback((event) => {
-    // 如果当前在Personality、Story或Gallery页面，不处理滚轮事件，让组件自己处理
-    if (currentPage === 2 || currentPage === 5 || currentPage === 6) { // Personality页面是第3页（索引为2），Story页面是第6页（索引为5），Gallery页面是第7页（索引为6）
+    // 如果当前在 Personality、Story、Gallery、Conclusion 页面，不处理滚轮事件，让组件自己处理/原生滚动
+    if (currentPage === 2 || currentPage === 5 || currentPage === 6 || currentPage === 7) { // 2:Personality, 5:Story, 6:Gallery, 7:Conclusion
       return;
     }
     
@@ -232,7 +237,11 @@ const PageController = () => {
     // deltaMode === 0: 像素；1: 行；2: 页
     const normalizeWheelDeltaY = (e) => {
       if (e.deltaMode === 1) {
-        return e.deltaY * 16; // 近似每行16px
+        // return e.deltaY * 16; // 近似每行16px
+                // Firefox 使用 "行" 作为滚动单位，
+        // 直接使用 deltaY 往往小于阈值，导致滚动无效。
+        // 这里将其放大到接近像素级别，以保持与其它浏览器一致。
+        return e.deltaY * 100;
       }
       if (e.deltaMode === 2) {
         return e.deltaY * window.innerHeight; // 以一页高度估算
@@ -298,7 +307,7 @@ const PageController = () => {
           const isCurrentPage = index === currentPage;
           const isPersonalityActive = isPersonalityPage && isCurrentPage;
           const isStoryActive = isStoryPage && isCurrentPage;
-          const isGalleryActive = isGalleryPage && isCurrentPage;
+          const isGalleryActive = false; // Gallery 不使用胶囊风格
           const splitInfo = getDotSplitInfo(index);
           
           // 生成动态样式
@@ -332,8 +341,6 @@ const PageController = () => {
                 isPersonalityActive ? 'personality-capsule' : ''
               } ${
                 isStoryActive ? 'story-capsule' : ''
-              } ${
-                isGalleryActive ? 'gallery-capsule' : ''
               } ${splitInfo.color === 'black' ? 'dark-dot' : ''} ${
                 splitInfo.type === 'split' ? 'split-dot' : ''
               }`}
@@ -341,11 +348,9 @@ const PageController = () => {
               onClick={() => changePage(index)}
               title={`第${index + 1}页`}
             >
-              {(isPersonalityActive || isStoryActive || isGalleryActive) && (() => {
+              {(isPersonalityActive || isStoryActive) && (() => {
                 // 计算胶囊进度条的样式
-                const progress = isPersonalityActive ? personalityScrollProgress : 
-                               isStoryActive ? storyScrollProgress : 
-                               galleryScrollProgress;
+                const progress = isPersonalityActive ? personalityScrollProgress : storyScrollProgress;
                 const progressHeight = progress * 100;
                 let progressStyle = { height: `${progressHeight}%` };
                 
