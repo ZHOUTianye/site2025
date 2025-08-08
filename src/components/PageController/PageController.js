@@ -17,6 +17,7 @@ const PageController = () => {
   const [personalityScrollProgress, setPersonalityScrollProgress] = useState(0); // Personality页面滚动进度
   const [storyScrollProgress, setStoryScrollProgress] = useState(0); // Story页面滚动进度
   const [galleryScrollProgress, setGalleryScrollProgress] = useState(0); // Gallery页面滚动进度
+  const [conclusionScrollProgress, setConclusionScrollProgress] = useState(0); // Conclusion页面滚动进度
   const containerRef = useRef(null);
   const lastScrollTimeRef = useRef(0);
   const scrollThreshold = 50; // 滚动阈值
@@ -60,70 +61,76 @@ const PageController = () => {
     setGalleryScrollProgress(progress);
   }, []);
 
+  // 处理Conclusion页面滚动进度
+  const handleConclusionScrollProgress = useCallback((progress) => {
+    setConclusionScrollProgress(progress);
+  }, []);
+
   // 计算指定indicator dot的分界线信息
   const getDotSplitInfo = useCallback((dotIndex) => {
-    // 只有Personality页面（索引2）需要分割效果
-    if (currentPage !== 2) {
+    // 只有Personality（索引2）和Conclusion（索引7）页面需要分割效果
+    if (currentPage !== 2 && currentPage !== 7) {
       // 其他页面使用固定样式
       // StudyPath（索引3）、Learning（索引4）、Story（索引5）、Gallery（索引6）均为深色背景页面
       const isBlackBackgroundPage = currentPage === 3 || currentPage === 4 || currentPage === 5 || currentPage === 6;
-      
+
       if (isBlackBackgroundPage) {
         return { type: 'solid', color: 'black', splitPercent: 0 };
       } else {
         return { type: 'solid', color: 'white', splitPercent: 0 };
       }
     }
-    
-    // Personality页面的分割逻辑：根据滚动位置和dot位置计算
+
     const viewportHeight = window.innerHeight;
-    
-    // Personality页面的滚动进度
-    const scrollProgress = personalityScrollProgress;
-    
-    // 计算第一屏（白色）在视口中的底部位置
-    const whiteAreaBottom = viewportHeight * (1 - scrollProgress);
-    
-    // 获取indicator容器和实际dots的位置
-    const indicatorContainer = document.querySelector('.page-indicator');
-    if (!indicatorContainer) return { type: 'solid', color: 'white', splitPercent: 0 };
-    
-    // 获取所有indicator dots的实际DOM元素
-    const allDots = indicatorContainer.querySelectorAll('.indicator-dot');
-    if (!allDots[dotIndex]) return { type: 'solid', color: 'white', splitPercent: 0 };
-    
-    // 获取当前dot的实际位置和尺寸
-    const dotElement = allDots[dotIndex];
-    const dotRect = dotElement.getBoundingClientRect();
-    
-    const dotTop = dotRect.top;
-    const dotBottom = dotRect.bottom;
-    const dotHeight = dotRect.height;
-    
-    // 添加调试信息
-    if (process.env.NODE_ENV === 'development') {
-      console.log(`Dot ${dotIndex}: top=${dotTop.toFixed(1)}, bottom=${dotBottom.toFixed(1)}, height=${dotHeight}, whiteAreaBottom=${whiteAreaBottom.toFixed(1)}`);
-    }
-    
-    // 判断dot与分界线的关系
-    if (whiteAreaBottom <= dotTop) {
-      // 分界线在dot上方，整个dot在黑色区域
-      return { type: 'solid', color: 'black', splitPercent: 0 };
-    } else if (whiteAreaBottom >= dotBottom) {
-      // 分界线在dot下方，整个dot在白色区域
-      return { type: 'solid', color: 'white', splitPercent: 0 };
-    } else {
-      // 分界线穿过dot，需要分割
-      const splitPercent = ((whiteAreaBottom - dotTop) / dotHeight) * 100;
-      const clampedPercent = Math.max(0, Math.min(100, splitPercent));
-      
-      if (process.env.NODE_ENV === 'development') {
-        console.log(`Dot ${dotIndex} split: ${clampedPercent.toFixed(1)}%`);
+
+    if (currentPage === 2) {
+      const scrollProgress = personalityScrollProgress;
+      const whiteAreaBottom = viewportHeight * (1 - scrollProgress);
+
+      const indicatorContainer = document.querySelector('.page-indicator');
+      if (!indicatorContainer) return { type: 'solid', color: 'white', splitPercent: 0 };
+      const allDots = indicatorContainer.querySelectorAll('.indicator-dot');
+      if (!allDots[dotIndex]) return { type: 'solid', color: 'white', splitPercent: 0 };
+      const dotElement = allDots[dotIndex];
+      const dotRect = dotElement.getBoundingClientRect();
+      const dotTop = dotRect.top;
+      const dotBottom = dotRect.bottom;
+      const dotHeight = dotRect.height;
+
+      if (whiteAreaBottom <= dotTop) {
+        return { type: 'solid', color: 'black', splitPercent: 0 };
+      } else if (whiteAreaBottom >= dotBottom) {
+        return { type: 'solid', color: 'white', splitPercent: 0 };
+      } else {
+        const splitPercent = ((whiteAreaBottom - dotTop) / dotHeight) * 100;
+        const clampedPercent = Math.max(0, Math.min(100, splitPercent));
+        return { type: 'split', color: 'mixed', splitPercent: clampedPercent };
       }
-      
-      return { type: 'split', color: 'mixed', splitPercent: clampedPercent };
+    } else {
+      const scrollProgress = conclusionScrollProgress;
+      const whiteAreaTop = viewportHeight * (1 - scrollProgress);
+
+      const indicatorContainer = document.querySelector('.page-indicator');
+      if (!indicatorContainer) return { type: 'solid', color: 'white', splitPercent: 0 };
+      const allDots = indicatorContainer.querySelectorAll('.indicator-dot');
+      if (!allDots[dotIndex]) return { type: 'solid', color: 'white', splitPercent: 0 };
+      const dotElement = allDots[dotIndex];
+      const dotRect = dotElement.getBoundingClientRect();
+      const dotTop = dotRect.top;
+      const dotBottom = dotRect.bottom;
+      const dotHeight = dotRect.height;
+
+      if (whiteAreaTop <= dotTop) {
+        return { type: 'solid', color: 'white', splitPercent: 0 };
+      } else if (whiteAreaTop >= dotBottom) {
+        return { type: 'solid', color: 'black', splitPercent: 0 };
+      } else {
+        const splitPercent = ((whiteAreaTop - dotTop) / dotHeight) * 100;
+        const clampedPercent = Math.max(0, Math.min(100, splitPercent));
+        return { type: 'split', color: 'mixed', splitPercent: clampedPercent };
+      }
     }
-  }, [currentPage, personalityScrollProgress, storyScrollProgress]);
+  }, [currentPage, personalityScrollProgress, conclusionScrollProgress, storyScrollProgress]);
 
   // 获取可访问的页面数量（用于指示器显示）
   const getAccessiblePageCount = useCallback(() => {
@@ -207,15 +214,15 @@ const PageController = () => {
       name: 'story'
     },
     {
-      component: <Gallery 
-        isActive={currentPage === 6} 
+      component: <Gallery
+        isActive={currentPage === 6}
         onScrollProgress={handleGalleryScrollProgress}
         onBoundaryScroll={handleGalleryBoundaryScroll}
-      />, 
+      />,
       name: 'gallery'
     },
     {
-      component: <Conclusion />, 
+      component: <Conclusion onScrollProgress={handleConclusionScrollProgress} />,
       name: 'conclusion'
     }
   ];
@@ -304,32 +311,43 @@ const PageController = () => {
           const isPersonalityPage = index === 2;
           const isStoryPage = index === 5;
           const isGalleryPage = index === 6;
+          const isConclusionPage = index === 7;
           const isCurrentPage = index === currentPage;
           const isPersonalityActive = isPersonalityPage && isCurrentPage;
           const isStoryActive = isStoryPage && isCurrentPage;
+          const isConclusionActive = isConclusionPage && isCurrentPage;
           const isGalleryActive = false; // Gallery 不使用胶囊风格
           const splitInfo = getDotSplitInfo(index);
           
           // 生成动态样式
           let dynamicStyle = {};
           if (splitInfo.type === 'split') {
-            // 分割效果：上半部分白背景样式，下半部分黑背景样式
             if (isCurrentPage) {
-              // active状态的分割颜色
-              dynamicStyle.background = `linear-gradient(to bottom, 
-                #333333 0%, 
-                #333333 ${splitInfo.splitPercent}%, 
-                #ffffff ${splitInfo.splitPercent}%, 
+              dynamicStyle.background = isViewingConclusion
+                ? `linear-gradient(to bottom,
+                #ffffff 0%,
+                #ffffff ${splitInfo.splitPercent}%,
+                #333333 ${splitInfo.splitPercent}%,
+                #333333 100%)`
+                : `linear-gradient(to bottom,
+                #333333 0%,
+                #333333 ${splitInfo.splitPercent}%,
+                #ffffff ${splitInfo.splitPercent}%,
                 #ffffff 100%)`;
             } else {
-              // 非active状态的分割颜色
-              dynamicStyle.background = `linear-gradient(to bottom, 
-                rgba(51, 51, 51, 0.3) 0%, 
-                rgba(51, 51, 51, 0.3) ${splitInfo.splitPercent}%, 
-                rgba(255, 255, 255, 0.3) ${splitInfo.splitPercent}%, 
+              dynamicStyle.background = isViewingConclusion
+                ? `linear-gradient(to bottom,
+                rgba(255, 255, 255, 0.3) 0%,
+                rgba(255, 255, 255, 0.3) ${splitInfo.splitPercent}%,
+                rgba(51, 51, 51, 0.3) ${splitInfo.splitPercent}%,
+                rgba(51, 51, 51, 0.3) 100%)`
+                : `linear-gradient(to bottom,
+                rgba(51, 51, 51, 0.3) 0%,
+                rgba(51, 51, 51, 0.3) ${splitInfo.splitPercent}%,
+                rgba(255, 255, 255, 0.3) ${splitInfo.splitPercent}%,
                 rgba(255, 255, 255, 0.3) 100%)`;
             }
-            
+
             // 添加hover效果的CSS变量
             dynamicStyle['--split-percent'] = `${splitInfo.splitPercent}%`;
           }
@@ -341,6 +359,8 @@ const PageController = () => {
                 isPersonalityActive ? 'personality-capsule' : ''
               } ${
                 isStoryActive ? 'story-capsule' : ''
+              } ${
+                isConclusionActive ? 'conclusion-capsule' : ''
               } ${splitInfo.color === 'black' ? 'dark-dot' : ''} ${
                 splitInfo.type === 'split' ? 'split-dot' : ''
               }`}
@@ -348,46 +368,40 @@ const PageController = () => {
               onClick={() => changePage(index)}
               title={`第${index + 1}页`}
             >
-              {(isPersonalityActive || isStoryActive) && (() => {
-                // 计算胶囊进度条的样式
-                const progress = isPersonalityActive ? personalityScrollProgress : storyScrollProgress;
+              {(isPersonalityActive || isStoryActive || isConclusionActive) && (() => {
+                const progress = isPersonalityActive
+                  ? personalityScrollProgress
+                  : isStoryActive
+                  ? storyScrollProgress
+                  : conclusionScrollProgress;
                 const progressHeight = progress * 100;
                 let progressStyle = { height: `${progressHeight}%` };
-                
+
                 if (splitInfo.type === 'split') {
-                  // 在分割状态下，需要计算进度条内部的颜色分割
-                  // 进度条的分割点 = (分界线位置 / 胶囊总高度) * 100
                   const progressSplitPercent = splitInfo.splitPercent;
-                  
-                  // 计算进度条内部的分割比例
-                  // 如果进度条高度小于分界线位置，则全部为上半部分颜色
-                  // 如果进度条高度大于分界线位置，则需要分割显示
-                  
+
                   if (progressHeight <= progressSplitPercent) {
-                    // 进度条完全在分界线上方，使用上半部分颜色（适合白背景的颜色）
-                    progressStyle.background = '#333333';
+                    progressStyle.background = isConclusionActive ? '#ffffff' : '#333333';
                   } else if (progressSplitPercent <= 0) {
-                    // 分界线在胶囊上方，进度条全部使用下半部分颜色（适合黑背景的颜色）
-                    progressStyle.background = '#ffffff';
+                    progressStyle.background = isConclusionActive ? '#333333' : '#ffffff';
                   } else {
-                    // 进度条跨越分界线，需要分割显示
                     const progressSplitRatio = (progressSplitPercent / progressHeight) * 100;
-                    progressStyle.background = `linear-gradient(to bottom, 
-                      #333333 0%, 
-                      #333333 ${progressSplitRatio}%, 
-                      #ffffff ${progressSplitRatio}%, 
-                      #ffffff 100%)`;
+                    const topColor = isConclusionActive ? '#ffffff' : '#333333';
+                    const bottomColor = isConclusionActive ? '#333333' : '#ffffff';
+                    progressStyle.background = `linear-gradient(to bottom,
+                      ${topColor} 0%,
+                      ${topColor} ${progressSplitRatio}%,
+                      ${bottomColor} ${progressSplitRatio}%,
+                      ${bottomColor} 100%)`;
                   }
                 } else if (splitInfo.color === 'black') {
-                  // 整个胶囊在黑色背景下，使用白色进度条
                   progressStyle.background = '#ffffff';
                 } else {
-                  // 整个胶囊在白色背景下，使用默认的深色进度条
                   progressStyle.background = '#333333';
                 }
-                
+
                 return (
-                  <div 
+                  <div
                     className="capsule-progress"
                     style={progressStyle}
                   />

@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useCallback, useState } from 'react';
 import './Conclusion.css';
 
-function Conclusion() {
+function Conclusion({ onScrollProgress }) {
   const containerRef = useRef(null);
   const stickyContentRef = useRef(null);
   const [isPageVisible, setIsPageVisible] = useState(false);
@@ -24,9 +24,13 @@ function Conclusion() {
     const maxScroll = scrollHeight - clientHeight;
     const progress = maxScroll > 0 ? scrollTop / maxScroll : 0;
 
+    if (onScrollProgress) {
+      onScrollProgress(progress);
+    }
+
     // 反向：黑 -> 白，因此白色从下半屏逐步占比增加
     const viewportHeight = window.innerHeight;
-    const whiteAreaTop = viewportHeight * progress; // 从底部往上推白色
+    const whiteAreaTop = viewportHeight * (1 - progress); // 从底部往上推白色
 
     const sticky = stickyContentRef.current;
     if (sticky) {
@@ -45,7 +49,7 @@ function Conclusion() {
         setTextSplitPercent(finalPercent);
       }
     }
-  }, [isPageVisible]);
+  }, [isPageVisible, onScrollProgress]);
 
   useEffect(() => {
     const container = containerRef.current;
