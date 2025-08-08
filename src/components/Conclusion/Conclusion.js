@@ -30,9 +30,9 @@ function Conclusion({ onScrollProgress, onBoundaryScroll }) {
     }
     setScrollProgress(progress);
 
-    // 反向：黑 -> 白，因此白色从下半屏逐步占比增加
+    // 参考Personality页面逻辑：计算背景分界线位置
     const viewportHeight = window.innerHeight;
-    const whiteAreaTop = viewportHeight * (1 - progress); // 从底部往上推白色
+    const whiteAreaBottom = viewportHeight * (1 - progress); // Personality用的是whiteAreaBottom
 
     const sticky = stickyContentRef.current;
     if (sticky) {
@@ -41,12 +41,16 @@ function Conclusion({ onScrollProgress, onBoundaryScroll }) {
       const contentBottom = contentRect.bottom;
       const contentHeight = contentRect.height;
 
-      if (whiteAreaTop <= contentTop) {
-        setTextSplitPercent(0); // 全黑
-      } else if (whiteAreaTop >= contentBottom) {
-        setTextSplitPercent(100); // 全白
+      // 计算分界线与文字内容的关系 - 参考Personality页面逻辑
+      if (whiteAreaBottom <= contentTop) {
+        // 分界线在内容上方 - 内容全在白色背景中，显示黑字
+        setTextSplitPercent(0); 
+      } else if (whiteAreaBottom >= contentBottom) {
+        // 分界线在内容下方 - 内容全在黑色背景中，显示白字
+        setTextSplitPercent(100);
       } else {
-        const splitPercent = ((whiteAreaTop - contentTop) / contentHeight) * 100;
+        // 分界线穿过内容 - 计算分割比例
+        const splitPercent = ((whiteAreaBottom - contentTop) / contentHeight) * 100;
         const finalPercent = Math.max(0, Math.min(100, splitPercent));
         setTextSplitPercent(finalPercent);
       }
@@ -110,10 +114,13 @@ function Conclusion({ onScrollProgress, onBoundaryScroll }) {
     const deltaY = event.deltaY;
     const isAtTop = container.dataset.atTop === 'true';
     const isAtBottom = container.dataset.atBottom === 'true';
-    if ((isAtTop && deltaY < 0) || (isAtBottom && deltaY > 0)) {
+    
+    // 只处理向上滚动到顶部的情况，禁用向下滚动边界检测（因为这是最后一页）
+    if (isAtTop && deltaY < 0) {
       event.preventDefault();
-      if (onBoundaryScroll) onBoundaryScroll(deltaY > 0 ? 'down' : 'up');
+      if (onBoundaryScroll) onBoundaryScroll('up');
     }
+    // 移除向下滚动的边界检测，防止跳转到其他页面
   }, [onBoundaryScroll]);
 
   // 专门处理鼠标滚轮：平滑滚动，到边界触发翻页
@@ -126,10 +133,14 @@ function Conclusion({ onScrollProgress, onBoundaryScroll }) {
     const { scrollTop, scrollHeight, clientHeight } = container;
     const isAtTop = scrollTop === 0;
     const isAtBottom = scrollTop + clientHeight >= scrollHeight - 1;
-    if ((isAtTop && deltaY < 0) || (isAtBottom && deltaY > 0)) {
-      if (onBoundaryScroll) onBoundaryScroll(deltaY > 0 ? 'down' : 'up');
+    
+    // 只处理向上滚动到顶部的情况，禁用向下滚动边界检测（因为这是最后一页）
+    if (isAtTop && deltaY < 0) {
+      if (onBoundaryScroll) onBoundaryScroll('up');
       return;
     }
+    // 移除向下滚动的边界检测
+    
     const scrollAmount = deltaY * 1.2; // 略降速，提升流畅度
     const target = Math.max(0, Math.min(scrollHeight - clientHeight, scrollTop + scrollAmount));
     smoothScrollTo(target);
@@ -159,55 +170,56 @@ function Conclusion({ onScrollProgress, onBoundaryScroll }) {
   return (
     <div className="conclusion-container" ref={containerRef}>
       <div className="conclusion-combined">
-        {/* 粘性内容 */}
-        <div className="conclusion-sticky" ref={stickyContentRef}>
-          <div className="conclusion-text-split">
-            {/* 白色文字层（用于黑背景） - 处于下半屏，逐步扩大到整屏白 */}
-            <div 
-              className="conclusion-layer layer-light"
-              style={{
-                clipPath: `polygon(0 ${textSplitPercent}%, 100% ${textSplitPercent}%, 100% 100%, 0 100%)`
-              }}
-            >
-              <div className="conclusion-content">
-                <h1>我享受山顶的云海，也喜爱海边的日出。</h1>
-                <p>我很庆幸自己敢于攀登，勇于探寻，留下了这些文字、音频和影像。</p>
-                <p>它们如同一本厚厚的书，记载了我的记忆与感受，亦如一条纽带，联系着每一位共鸣者你。</p>
-                <p>朋友，感谢你光临我的个人网页并读到了这里，祝你活的潇洒，笑口常开！</p>
+        {/* 背景渐变层 - 覆盖整个300vh */}
+        <div className="conclusion-all-bg" />
+        
+        {/* Sticky内容区域 - 前200vh */}
+        <div className="conclusion-sticky-area">
+          <div className="conclusion-sticky" ref={stickyContentRef}>
+            <div className="conclusion-text-split">
+              {/* 白色文字层（用于黑背景） - 处于下半屏，逐步扩大到整屏白 */}
+              <div 
+                className="conclusion-layer layer-light"
+                style={{
+                  clipPath: `polygon(0 ${textSplitPercent}%, 100% ${textSplitPercent}%, 100% 100%, 0 100%)`
+                }}
+              >
+                <div className="conclusion-content">
+                  <h1>我享受山顶的云海，也喜爱海边的日出。</h1>
+                  <p>我很庆幸自己敢于攀登，勇于探寻，留下了这些文字、音频和影像。</p>
+                  <p>它们如同一本厚厚的书，记载了我的记忆与感受，亦如一条纽带，联系着每一位共鸣者你。</p>
+                  <p>朋友，感谢你光临我的个人网页并读到了这里，祝你活的潇洒，笑口常开！</p>
+                </div>
               </div>
-            </div>
 
-            {/* 黑色文字层（用于白背景） - 处于上半屏 */}
-            <div 
-              className="conclusion-layer layer-dark"
-              style={{
-                clipPath: `polygon(0 0, 100% 0, 100% ${textSplitPercent}%, 0 ${textSplitPercent}%)`
-              }}
-            >
-              <div className="conclusion-content">
-                <h1>我享受山顶的云海，也喜爱海边的日出。</h1>
-                <p>我很庆幸自己敢于攀登，勇于探寻，留下了这些文字、音频和影像。</p>
-                <p>它们如同一本厚厚的书，记载了我的记忆与感受，亦如一条纽带，联系着每一位共鸣者你。</p>
-                <p>朋友，感谢你光临我的个人网页并读到了这里，祝你活的潇洒，笑口常开！</p>
+              {/* 黑色文字层（用于白背景） - 处于上半屏 */}
+              <div 
+                className="conclusion-layer layer-dark"
+                style={{
+                  clipPath: `polygon(0 0, 100% 0, 100% ${textSplitPercent}%, 0 ${textSplitPercent}%)`
+                }}
+              >
+                <div className="conclusion-content">
+                  <h1>我享受山顶的云海，也喜爱海边的日出。</h1>
+                  <p>我很庆幸自己敢于攀登，勇于探寻，留下了这些文字、音频和影像。</p>
+                  <p>它们如同一本厚厚的书，记载了我的记忆与感受，亦如一条纽带，联系着每一位共鸣者你。</p>
+                  <p>朋友，感谢你光临我的个人网页并读到了这里，祝你活的潇洒，笑口常开！</p>
+                </div>
               </div>
             </div>
-          </div>
-          <div className="hero-block">
-            <h1 className="hero-title">心在旷野</h1>
-            <div className="hero-subtitle">天苍苍，野茫茫<br />风吹草低见牛羊</div>
           </div>
         </div>
 
-        {/* 背景从黑到白：放在普通文流层，避免覆盖粘性内容 */}
-        <div className="conclusion-all-bg" />
+        {/* Hero block - 在200vh-260vh位置，非sticky内容，高度60vh */}
+        <div className="hero-block">
+          <h1 className="hero-title">心在旷野</h1>
+          <div className="hero-subtitle">天苍苍，野茫茫<br />风吹草低见牛羊</div>
+        </div>
       </div>
-      {/* 抽屉式底部内容 - 固定定位 */}
-      <div className="conclusion-drawer drawer-fixed">
-        <div className="drawer-fixed-inner">
-          <div
-            className="drawer-reveal"
-            style={{ clipPath: `inset(${(1 - scrollProgress) * 100}% 0 0 0)` }}
-          >
+      {/* 底部导航内容 - 正常文档流 */}
+      <div className="conclusion-drawer">
+        <div className="drawer-inner">
+          <div className="drawer-reveal">
             <div className="drawer-content">
               <div className="drawer-toprow">
                 <div className="drawer-breadcrumb">主页</div>
