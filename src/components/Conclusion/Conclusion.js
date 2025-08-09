@@ -32,8 +32,8 @@ function Conclusion({ onScrollProgress, onBoundaryScroll }) {
 
     // 参考Personality页面逻辑：计算背景分界线位置
     const viewportHeight = window.innerHeight;
-    const whiteAreaBottom = viewportHeight * (1 - progress); // Personality用的是whiteAreaBottom
-
+    const whiteAreaBottom = viewportHeight * (1 - 2*progress); // Personality用的是whiteAreaBottom
+    console.log(whiteAreaBottom);
     const sticky = stickyContentRef.current;
     if (sticky) {
       const contentRect = sticky.getBoundingClientRect();

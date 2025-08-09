@@ -54,11 +54,11 @@
 
 /* Hero block - 非sticky内容，在200vh-260vh位置，高度60vh */
 .hero-block { 
-  height: 60vh; 
+  height: 55vh; 
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   text-align: center; 
   width: 100%; 
   max-width: 1200px; 
@@ -92,13 +92,16 @@
 
 /* 底部导航区域 - 正常文档流，高度40vh */
 .conclusion-drawer { 
-  height: 40vh; 
+  height: 45vh; 
   width: 100%;
+
+  margin: auto;
+
   position: relative;
   z-index: 20; 
 }
 .drawer-inner { 
-  height: 40vh; 
+  height: 45vh; 
   width: 100%;
   display: flex; 
   align-items: flex-end; 
@@ -120,7 +123,7 @@
   flex-direction: column;
 }
 
-.drawer-toprow { display: flex; align-items: center; justify-content: space-between; padding: 1.2rem 4rem; border-bottom: 1px solid #e5e5e5; }
+.drawer-toprow { display: flex; align-items: center; justify-content: space-between; padding: 1.2rem 10%; border-bottom: 1px solid #e5e5e5; }
 .drawer-breadcrumb { color: #333; font-size: 1.8rem; }
 
 .drawer-hero {
@@ -133,10 +136,10 @@
 .drawer-search-input { flex: 1; height: 3.6rem; border-radius: 0; border: 1px solid #ddd; padding: 0 1rem; font-size: 1.6rem; }
 .drawer-search-icon { font-size: 1.8rem; }
 
-.drawer-links { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; padding: 2rem 4rem 3rem 4rem; border-top: 1px solid #eee; flex-grow: 1; }
-.drawer-col-title { font-weight: 600; margin-bottom: 1rem; color: #222; font-size: 1.9rem; }
-.drawer-links a { display: block; color: #444; margin: 0.7rem 0; text-decoration: none; font-size: 1.7rem; }
-.drawer-info-row { display: flex; justify-content: space-between; align-items: center; padding: 1.2rem 4rem; border-top: 1px solid #eaeaea; background: #f7f7f7; color: #666; }
+.drawer-links { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; padding: 2rem 10% 3rem 10%; border-top: 1px solid #eee; flex-grow: 1; }
+.drawer-col-title { font-weight: 600; margin-bottom: 1.8rem; color: #222; font-size: 2.5rem; }
+.drawer-links a { display: block; color: #444; margin: 1.6rem 0; text-decoration: none; font-size: 1.9rem; }
+.drawer-info-row { display: flex; justify-content: space-between; align-items: center; padding: 1.2rem 10%; border-top: 1px solid #eaeaea; background: #f7f7f7; color: #666; }
 .drawer-info-left { font-size: 1.4rem; }
 .drawer-info-right { font-size: 1.4rem; }
 
