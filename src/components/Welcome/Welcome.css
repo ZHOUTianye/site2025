@@ -105,6 +105,13 @@
   width: 80%;
 }
 
+.welcome-footer {
+  font-size: 1.5rem;
+  color: #666666;
+  text-align: center;
+  
+}
+
 /* 响应式设计 */
 @media (max-width: 1440px) {
   .welcome-container {

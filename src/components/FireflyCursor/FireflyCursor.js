@@ -89,6 +89,31 @@ function FireflyCursor() {
         }
       }
 
+      // Special handling for Conclusion page's gradient background
+      const conclusionContainer = document.querySelector('.conclusion-container');
+      if (conclusionContainer) {
+        const rect = conclusionContainer.getBoundingClientRect();
+        if (
+          e.clientX >= rect.left &&
+          e.clientX <= rect.right &&
+          e.clientY >= rect.top &&
+          e.clientY <= rect.bottom
+        ) {
+          // Conclusion页面的黑色背景范围是动态变化的，基于滚动进度
+          const container = conclusionContainer;
+          const { scrollTop, scrollHeight, clientHeight } = container;
+          const maxScroll = scrollHeight - clientHeight;
+          const progress = maxScroll > 0 ? scrollTop / maxScroll : 0;
+          
+          // 使用与Conclusion组件相同的逻辑计算分界线
+          const viewportHeight = window.innerHeight;
+          const whiteAreaBottom = viewportHeight * (1 - 2 * progress);
+          
+          // 如果鼠标位置在分界线以上，则为黑色背景；否则为白色背景
+          isDark = e.clientY < whiteAreaBottom;
+        }
+      }
+
       const clickable = element && (
         element.closest('.swiper-slide') ||
         element.closest('.story-swiper-container') ||
@@ -162,11 +187,15 @@ function FireflyCursor() {
   return (
     <div className="firefly-container">
       {trail.map((p, idx) => {
-        const baseSize = interactive
-          ? INTERACTIVE_SIZE
-          : idle && idx === 0
-            ? IDLE_SIZE
-            : BASE_SIZE;
+        // 在亮色背景下（p.dark === false），移动时不再缩小主指针尺寸：保持为 IDLE_SIZE
+        let baseSize;
+        if (interactive) {
+          baseSize = INTERACTIVE_SIZE;
+        } else if (!p.dark) {
+          baseSize = IDLE_SIZE;
+        } else {
+          baseSize = idle && idx === 0 ? IDLE_SIZE : BASE_SIZE;
+        }
         const rawSize = baseSize + idx * step;
         const size = Math.min(rawSize, MAX_SIZE);
         const opacity = 1 - idx / MAX_TRAIL;

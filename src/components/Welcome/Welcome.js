@@ -65,6 +65,9 @@ const Welcome = () => {
           <button className="nav-btn">快捷链接</button>
         </div>
       </div>
+      <div className="welcome-footer">
+        <p>网站升级中，所有链接均无法跳转。站长正在努力完善，预计在2025年年底完成，给您带来的不便敬请谅解！</p>
+      </div>
     </div>
   );
 };

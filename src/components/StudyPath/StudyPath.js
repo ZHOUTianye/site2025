@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './StudyPath.css';
+import '../../styles/textAnimation.css';
 
-function StudyPath() {
+function StudyPath({ previousPage, currentPage }) {
   const [selectedYear, setSelectedYear] = useState(null);
   const [animationDirection, setAnimationDirection] = useState(null);
   const [selectedIndex, setSelectedIndex] = useState(null);
+  const [animationKey, setAnimationKey] = useState(0); // 用于强制重新渲染动画
 
   // 主题段落内容
   const mainContent = `在别人眼里，上学是一件苦差事；可在我看来，它更像一场寻乐的大冒险——毕竟我从小就不是什么省油的灯。我的求学之路曲折而精彩，十七载如白驹过隙，转眼间我已站在学生生涯的终点`;
@@ -49,6 +51,19 @@ function StudyPath() {
       content: "依旧山高水长，依旧精彩纷呈，敬请期待。"
     }
   ];
+  // 监听页面切换，重置动画
+  useEffect(() => {
+    // 每次页面切换时，增加animationKey来强制重新渲染
+    setAnimationKey(prev => prev + 1);
+  }, [currentPage, previousPage]);
+
+  const getAnimationClass = () => {
+    if (previousPage === null) {
+      return 'slide-up';
+    }
+    return previousPage < currentPage ? 'slide-up' : 'slide-down';
+  };
+  const animationClass = getAnimationClass();
 
   const handleTimelineClick = (item, index) => {
     if (!selectedYear) {
@@ -105,8 +120,18 @@ function StudyPath() {
                 </>
               ) : (
                 <>
-                  <div className="main-content">{mainContent}</div>
-                  <div className="main-subtitle">{mainSubtitle}</div>
+                  <div 
+                    key={`main-content-${animationKey}`}
+                    className={`main-content animated-text ${animationClass}`}
+                  >
+                    {mainContent}
+                  </div>
+                  <div 
+                    key={`main-subtitle-${animationKey}`}
+                    className={`main-subtitle animated-text ${animationClass}`}
+                  >
+                    {mainSubtitle}
+                  </div>
                 </>
               )}
             </div>

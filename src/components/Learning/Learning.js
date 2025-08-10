@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import './Learning.css';
+import '../../styles/textAnimation.css';
 
-function Learning() {
+function Learning({ previousPage, currentPage }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [animationKey, setAnimationKey] = useState(0); // 用于强制重新渲染动画
 
   // 左侧内容
   const content = {
@@ -43,6 +45,20 @@ function Learning() {
       color: "#FFEAA7"
     }
   ];
+  // 监听页面切换，重置动画
+  useEffect(() => {
+    // 每次页面切换时，增加animationKey来强制重新渲染
+    setAnimationKey(prev => prev + 1);
+  }, [currentPage, previousPage]);
+
+  const getAnimationClass = () => {
+    if (previousPage === null) {
+      return 'slide-up';
+    }
+    return previousPage < currentPage ? 'slide-up' : 'slide-down';
+  };
+  const animationClass = getAnimationClass();
+
 
   // 自动轮播逻辑
   useEffect(() => {
@@ -120,7 +136,12 @@ function Learning() {
         <div className="content-section">
           {/* 左侧文字内容 */}
           <div className="text-content">
-            <div className="learning-content">{content.text}</div>
+            <div 
+              key={`learning-content-${animationKey}`}
+              className={`learning-content animated-text ${animationClass}`}
+            >
+              {content.text}
+            </div>
           </div>
           
           {/* 右侧立体轮播 */}

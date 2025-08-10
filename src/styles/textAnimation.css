@@ -1,0 +1,42 @@
+.animated-text {
+    opacity: 0;
+    transform: translateY(0);
+    transition: none;
+  }
+  
+  .animated-text.slide-up {
+    animation: slideUpFadeIn 1.5s ease-out forwards;
+  }
+
+  .animated-text.slide-down {
+    animation: slideDownFadeIn 1.5s ease-out forwards;
+  }
+  
+  /* 添加重置状态 */
+  .animated-text.reset {
+    opacity: 0;
+    transform: translateY(0);
+    animation: none;
+  }
+  
+  @keyframes slideUpFadeIn {
+    0% {
+      opacity: 0;
+      transform: translateY(50px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes slideDownFadeIn {
+    0% {
+      opacity: 0;
+      transform: translateY(-50px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }

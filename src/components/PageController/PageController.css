@@ -48,6 +48,28 @@
   gap: 1rem;
 }
 
+/* Conclusion >90% 时显示的回到顶部按钮 */
+.back-to-top-btn {
+  width: 3.2rem;
+  height: 3.2rem;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  background-color: rgba(220, 220, 220, 1);
+  color: #000000;
+  font-size: 1.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.back-to-top-btn:hover {
+  background-color: #333333;
+  color: #ffffff;
+  transform: scale(1.05);
+}
+
 /* 在黑色背景下的单个indicator dot样式 */
 .indicator-dot.dark-dot {
   background-color: rgba(255, 255, 255, 0.3) !important;

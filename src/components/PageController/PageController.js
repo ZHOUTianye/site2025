@@ -17,7 +17,8 @@ const PageController = () => {
   const [personalityScrollProgress, setPersonalityScrollProgress] = useState(0); // Personality页面滚动进度
   const [storyScrollProgress, setStoryScrollProgress] = useState(0); // Story页面滚动进度
   const [galleryScrollProgress, setGalleryScrollProgress] = useState(0); // Gallery页面滚动进度
-  const [conclusionScrollProgress, setConclusionScrollProgress] = useState(0); // Conclusion页面滚动进度
+  const [conclusionScrollProgress, setConclusionScrollProgress] = useState(0); // Conclusion页面滚动进度（用于文字）
+  const [conclusionIndicatorProgress, setConclusionIndicatorProgress] = useState(0); // Conclusion页面滚动进度副本（用于指示器）
   const containerRef = useRef(null);
   const lastScrollTimeRef = useRef(0);
   const scrollThreshold = 50; // 滚动阈值
@@ -66,6 +67,18 @@ const PageController = () => {
     setConclusionScrollProgress(progress);
   }, []);
 
+  // 回到顶部按钮点击：当在 Conclusion 页面时跳转回 Welcome 页面
+  const handleBackToTopClick = useCallback(() => {
+    if (currentPage !== 7) return;
+    // Welcome 在索引 0
+    changePage(0);
+  }, [currentPage, changePage]);
+
+  // 接收 Conclusion 复制出的进度，用于未来独立控制 indicator dot（当前不改变任何逻辑）
+  const handleConclusionIndicatorProgress = useCallback((progress) => {
+    setConclusionIndicatorProgress(progress);
+  }, []);
+
   // 计算指定indicator dot的分界线信息
   const getDotSplitInfo = useCallback((dotIndex) => {
     // Personality（索引2）与 Conclusion（索引7）需要分割效果
@@ -87,7 +100,12 @@ const PageController = () => {
     const isConclusion = currentPage === 7;
     const scrollProgress = isConclusion ? conclusionScrollProgress : personalityScrollProgress;
     // Personality: 白在上，使用白色区域底部；Conclusion: 白在下，使用白色区域顶部
-    const whiteBoundary = viewportHeight * (1 - scrollProgress);
+    let whiteBoundary;
+    if (currentPage === 7) {
+      whiteBoundary = viewportHeight * (1 - 2*scrollProgress);
+    } else {
+      whiteBoundary = viewportHeight * (1 - scrollProgress);
+    }
     
     // 获取indicator容器和实际dots的位置
     const indicatorContainer = document.querySelector('.page-indicator');
@@ -199,11 +217,11 @@ const PageController = () => {
       name: 'personality'
     },
     {
-      component: <StudyPath />, 
+      component: <StudyPath previousPage={previousPage} currentPage={currentPage} />,
       name: 'studyPath'
     },
     {
-      component: <Learning />, 
+      component: <Learning previousPage={previousPage} currentPage={currentPage} />, 
       name: 'learning'
     },
     {
@@ -223,18 +241,23 @@ const PageController = () => {
       name: 'gallery'
     },
     {
-      component: <Conclusion 
-        onScrollProgress={handleConclusionScrollProgress}
-        onBoundaryScroll={(direction) => {
-          if (isTransitioning) return;
-          const maxAccessiblePage = getAccessiblePageCount() - 1;
-          if (direction === 'up' && currentPage > 0) {
-            changePage(currentPage - 1);
-          } else if (direction === 'down' && currentPage < maxAccessiblePage) {
-            changePage(currentPage + 1);
-          }
-        }}
-      />, 
+      component: (
+        <Conclusion
+          previousPage={previousPage}
+          currentPage={currentPage}
+          onScrollProgress={handleConclusionScrollProgress}
+          onIndicatorProgress={handleConclusionIndicatorProgress}
+          onBoundaryScroll={(direction) => {
+            if (isTransitioning) return;
+            const maxAccessiblePage = getAccessiblePageCount() - 1;
+            if (direction === 'up' && currentPage > 0) {
+              changePage(currentPage - 1);
+            } else if (direction === 'down' && currentPage < maxAccessiblePage) {
+              changePage(currentPage + 1);
+            }
+          }}
+        />
+      ),
       name: 'conclusion'
     }
   ];
@@ -317,9 +340,19 @@ const PageController = () => {
         </button>
       </div>
 
-      {/* 页面指示器 - 也移到容器外面 */}
+      {/* 页面指示器 / 回到顶部（Conclusion 页面 >90% 进度） */}
       <div className="page-indicator">
-        {Array.from({ length: getAccessiblePageCount() }, (_, index) => {
+        {currentPage === 7 && conclusionScrollProgress > 0.9 ? (
+          <button
+            className="back-to-top-btn"
+            onClick={handleBackToTopClick}
+            title="回到顶部"
+            aria-label="回到顶部"
+          >
+            ↑
+          </button>
+        ) : (
+        Array.from({ length: getAccessiblePageCount() }, (_, index) => {
           const isPersonalityPage = index === 2;
           const isStoryPage = index === 5;
           const isGalleryPage = index === 6;
@@ -422,7 +455,8 @@ const PageController = () => {
               })()}
             </div>
           );
-        })}
+        })
+        )}
       </div>
 
       <div 

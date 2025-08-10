@@ -1,12 +1,36 @@
 import React, { useRef, useEffect, useCallback, useState } from 'react';
 import './Conclusion.css';
+import '../../styles/textAnimation.css';
 
-function Conclusion({ onScrollProgress, onBoundaryScroll }) {
+function Conclusion({ onScrollProgress, onBoundaryScroll, previousPage, currentPage, onIndicatorProgress }) {
   const containerRef = useRef(null);
   const stickyContentRef = useRef(null);
   const [isPageVisible, setIsPageVisible] = useState(false);
-  const [textSplitPercent, setTextSplitPercent] = useState(0); // 从黑到白，初始黑色为0%
+  const [textSplitPercent, setTextSplitPercent] = useState(100); // 从黑到白，初始黑色为100%（全黑背景，显示白字）
   const [scrollProgress, setScrollProgress] = useState(0); // 0-1，用于抽屉动画
+  const [animationKey, setAnimationKey] = useState(0); // 用于强制重新渲染动画
+
+  const getAnimationClass = () => {
+    if (previousPage === null) {
+      return 'slide-up';
+    }
+    return previousPage < currentPage ? 'slide-up' : 'slide-down';
+  };
+  const animationClass = getAnimationClass();
+
+  // 监听页面切换，重置动画
+  useEffect(() => {
+    // 每次页面切换时，增加animationKey来强制重新渲染
+    setAnimationKey(prev => prev + 1);
+  }, [currentPage, previousPage]);
+
+  // 页面进入时设置正确的初始状态
+  useEffect(() => {
+    // 从Gallery页面进入时，确保显示白色文字（黑色背景）
+    if (previousPage === 6) { // Gallery是第6页（索引6）
+      setTextSplitPercent(100); // 全黑背景，显示白字
+    }
+  }, [previousPage]);
 
   // 更新滚动进度与分割位置
   const updateProgress = useCallback(() => {
@@ -17,7 +41,7 @@ function Conclusion({ onScrollProgress, onBoundaryScroll }) {
     const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
     if (!isVisible) {
       setIsPageVisible(false);
-      setTextSplitPercent(0);
+      // 不要在这里重置textSplitPercent，保持当前状态
       return;
     }
     if (!isPageVisible) setIsPageVisible(true);
@@ -28,12 +52,16 @@ function Conclusion({ onScrollProgress, onBoundaryScroll }) {
     if (onScrollProgress) {
       onScrollProgress(progress);
     }
+    // 复制核心变量（用于未来独立控制 indicator dot），不改变现有逻辑
+    if (onIndicatorProgress) {
+      onIndicatorProgress(progress);
+    }
     setScrollProgress(progress);
 
     // 参考Personality页面逻辑：计算背景分界线位置
     const viewportHeight = window.innerHeight;
     const whiteAreaBottom = viewportHeight * (1 - 2*progress); // Personality用的是whiteAreaBottom
-    console.log(whiteAreaBottom);
+    // console.log(whiteAreaBottom);
     const sticky = stickyContentRef.current;
     if (sticky) {
       const contentRect = sticky.getBoundingClientRect();
@@ -141,7 +169,7 @@ function Conclusion({ onScrollProgress, onBoundaryScroll }) {
     }
     // 移除向下滚动的边界检测
     
-    const scrollAmount = deltaY * 1.2; // 略降速，提升流畅度
+    const scrollAmount = deltaY * 1.8; 
     const target = Math.max(0, Math.min(scrollHeight - clientHeight, scrollTop + scrollAmount));
     smoothScrollTo(target);
   }, [onBoundaryScroll, smoothScrollTo]);
@@ -184,7 +212,10 @@ function Conclusion({ onScrollProgress, onBoundaryScroll }) {
                   clipPath: `polygon(0 ${textSplitPercent}%, 100% ${textSplitPercent}%, 100% 100%, 0 100%)`
                 }}
               >
-                <div className="conclusion-content">
+                <div 
+                  key={`conclusion-light-${animationKey}`}
+                  className={`conclusion-content animated-text ${animationClass}`}
+                >
                   <h1>我享受山顶的云海，也喜爱海边的日出。</h1>
                   <p>我很庆幸自己敢于攀登，勇于探寻，留下了这些文字、音频和影像。</p>
                   <p>它们如同一本厚厚的书，记载了我的记忆与感受，亦如一条纽带，联系着每一位共鸣者你。</p>
@@ -199,7 +230,10 @@ function Conclusion({ onScrollProgress, onBoundaryScroll }) {
                   clipPath: `polygon(0 0, 100% 0, 100% ${textSplitPercent}%, 0 ${textSplitPercent}%)`
                 }}
               >
-                <div className="conclusion-content">
+                <div 
+                  key={`conclusion-dark-${animationKey}`}
+                  className={`conclusion-content animated-text ${animationClass}`}
+                >
                   <h1>我享受山顶的云海，也喜爱海边的日出。</h1>
                   <p>我很庆幸自己敢于攀登，勇于探寻，留下了这些文字、音频和影像。</p>
                   <p>它们如同一本厚厚的书，记载了我的记忆与感受，亦如一条纽带，联系着每一位共鸣者你。</p>
@@ -243,8 +277,8 @@ function Conclusion({ onScrollProgress, onBoundaryScroll }) {
               </div>
               <div className="drawer-col">
                 <div className="drawer-col-title">服务和产品</div>
-                <a>留达·简历/文书翻译修改工具</a>
-                <a>梦小媒·AI 留学小助手</a>
+                <a>留连·简历/文书翻译修改工具</a>
+                <a>梦小蝶·AI 留学小助手</a>
               </div>
               <div className="drawer-col">
                 <div className="drawer-col-title">快捷链接</div>
@@ -257,13 +291,19 @@ function Conclusion({ onScrollProgress, onBoundaryScroll }) {
 
               <div className="drawer-info-row">
                 <div className="drawer-info-left">周天野的个人主页</div>
-                <div className="drawer-info-right">QQ 微信 领英 脸书 ig icon</div>
+                <div className="drawer-info-right">社交平台：
+                  <a>QQ</a> &nbsp;
+                  <a>WeChat</a> &nbsp;
+                  <a>LinkedIn</a> &nbsp;
+                  <a>Facebook</a> &nbsp;
+                  <a>Instagram</a> &nbsp;
+                </div>
               </div>
 
               <div className="drawer-legalbar">
                 <div className="drawer-copy">版权所有 © 2023-2025 周天野</div>
                 <div className="drawer-legal-links">
-                  <a>联系我们</a>
+                  <a>联系我</a>
                   <a>隐私政策</a>
                   <a>使用条款</a>
                   <a>Cookies</a>
