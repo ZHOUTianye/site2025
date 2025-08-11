@@ -15,22 +15,22 @@ function Gallery({ isActive, onScrollProgress, onBoundaryScroll }) {
 
   // 图片数据 - 16张3:2比例在线样例图
   const images = [
-    { id: 1, src: 'https://picsum.photos/id/1015/900/600', title: '夕阳余晖', description: '窗边的温暖时光' },
-    { id: 2, src: 'https://picsum.photos/id/1016/900/600', title: '清晨薄雾', description: '朦胧的美好开始' },
-    { id: 3, src: 'https://picsum.photos/id/1025/900/600', title: '海天一色', description: '无垠的蓝色梦境' },
-    { id: 4, src: 'https://picsum.photos/id/1035/900/600', title: '春意盎然', description: '生机勃勃的绿意' },
-    { id: 5, src: 'https://picsum.photos/id/1041/900/600', title: '金色秋叶', description: '收获季节的温暖' },
-    { id: 6, src: 'https://picsum.photos/id/1043/900/600', title: '薰衣草田', description: '紫色的浪漫时光' },
-    { id: 7, src: 'https://picsum.photos/id/1050/900/600', title: '雨后清新', description: '洗涤心灵的纯净' },
-    { id: 8, src: 'https://picsum.photos/id/1052/900/600', title: '阳光午后', description: '慵懒惬意的时光' },
-    { id: 9, src: 'https://picsum.photos/id/1062/900/600', title: '梦幻黄昏', description: '如梦似幻的美景' },
-    { id: 10, src: 'https://picsum.photos/id/1069/900/600', title: '晴空万里', description: '心旷神怡的开阔' },
-    { id: 11, src: 'https://picsum.photos/id/1074/900/600', title: '暖阳如春', description: '温暖人心的光芒' },
-    { id: 12, src: 'https://picsum.photos/id/1080/900/600', title: '森林深处', description: '静谧安然的绿荫' },
-    { id: 13, src: 'https://picsum.photos/id/1084/900/600', title: '粉色黎明', description: '新一天的希望' },
-    { id: 14, src: 'https://picsum.photos/id/1081/900/600', title: '云卷云舒', description: '自由自在的飘逸' },
-    { id: 15, src: 'https://picsum.photos/id/1082/900/600', title: '紫色梦境', description: '神秘优雅的想象' },
-    { id: 16, src: 'https://picsum.photos/id/1083/900/600', title: '宁静致远', description: '内心平和的境界' }
+    { id: 1, src: 'https://raw.githubusercontent.com/ZHOUTianye/site2025/main/public/img/photowall/P01S.jpg', title: '石激浪花', description: '窗边的温暖时光' },
+    { id: 2, src: 'https://raw.githubusercontent.com/ZHOUTianye/site2025/main/public/img/photowall/P02S.jpg', title: '清晨薄雾', description: '朦胧的美好开始' },
+    { id: 3, src: 'https://raw.githubusercontent.com/ZHOUTianye/site2025/main/public/img/photowall/P03S.jpg', title: '海天一色', description: '无垠的蓝色梦境' },
+    { id: 4, src: 'https://raw.githubusercontent.com/ZHOUTianye/site2025/main/public/img/photowall/P04S.jpg', title: '春意盎然', description: '生机勃勃的绿意' },
+    { id: 5, src: 'https://raw.githubusercontent.com/ZHOUTianye/site2025/main/public/img/photowall/P05S.jpg', title: '金色秋叶', description: '收获季节的温暖' },
+    { id: 6, src: 'https://raw.githubusercontent.com/ZHOUTianye/site2025/main/public/img/photowall/P06S.jpg', title: '薰衣草田', description: '紫色的浪漫时光' },
+    { id: 7, src: 'https://raw.githubusercontent.com/ZHOUTianye/site2025/main/public/img/photowall/P07S.jpg', title: '雨后清新', description: '洗涤心灵的纯净' },
+    { id: 8, src: 'https://raw.githubusercontent.com/ZHOUTianye/site2025/main/public/img/photowall/P08S.jpg', title: '阳光午后', description: '慵懒惬意的时光' },
+    { id: 9, src: 'https://raw.githubusercontent.com/ZHOUTianye/site2025/main/public/img/photowall/P09S.jpg', title: '梦幻黄昏', description: '如梦似幻的美景' },
+    { id: 10, src: 'https://raw.githubusercontent.com/ZHOUTianye/site2025/main/public/img/photowall/P10S.jpg', title: '晴空万里', description: '心旷神怡的开阔' },
+    { id: 11, src: 'https://raw.githubusercontent.com/ZHOUTianye/site2025/main/public/img/photowall/P11S.jpg', title: '暖阳如春', description: '温暖人心的光芒' },
+    { id: 12, src: 'https://raw.githubusercontent.com/ZHOUTianye/site2025/main/public/img/photowall/P12S.jpg', title: '森林深处', description: '静谧安然的绿荫' },
+    { id: 13, src: 'https://raw.githubusercontent.com/ZHOUTianye/site2025/main/public/img/photowall/P13S.jpg', title: '粉色黎明', description: '新一天的希望' },
+    { id: 14, src: 'https://raw.githubusercontent.com/ZHOUTianye/site2025/main/public/img/photowall/P14S.jpg', title: '云卷云舒', description: '自由自在的飘逸' },
+    { id: 15, src: 'https://raw.githubusercontent.com/ZHOUTianye/site2025/main/public/img/photowall/P15S.jpg', title: '紫色梦境', description: '神秘优雅的想象' },
+    { id: 16, src: 'https://raw.githubusercontent.com/ZHOUTianye/site2025/main/public/img/photowall/P16S.jpg', title: '宁静致远', description: '内心平和的境界' }
   ];
 
   // 处理小图悬浮切换 - 集成折痕翻页和TV换台效果
@@ -214,7 +214,7 @@ function Gallery({ isActive, onScrollProgress, onBoundaryScroll }) {
                 crossOrigin="anonymous"
                 style={{
                   display: index === currentImageIndex ? 'block' : 'none',
-                  opacity: window.preloadedImages?.[image.src] ? 1 : 0
+                  opacity: 1
                 }}
               />
             ))}

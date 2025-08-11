@@ -30,9 +30,9 @@ function Story({ isActive, onScrollProgress, onBoundaryScroll }) {
 
   // 轮播内容
   const swiperSlides = [
-    { id: 1, content: "路上人生新旅途——匹兹堡见！" },
-    { id: 2, content: "探索未知的世界，拥抱新的挑战" },
-    { id: 3, content: "每一步都是成长，每一天都是新开始" }
+    { id: 1, content: "静下心，听城市角落的私语——深度探索哥伦布" },
+    { id: 2, content: "它们赞美太阳，它们赞美星辰——2025暑假 美国国家公园特辑" },
+    { id: 3, content: "“这儿是一个万花筒”——一日速览芝加哥" }
   ];
 
   // 计算遮罩层的动态样式

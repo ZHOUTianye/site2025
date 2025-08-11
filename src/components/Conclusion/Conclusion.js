@@ -9,6 +9,7 @@ function Conclusion({ onScrollProgress, onBoundaryScroll, previousPage, currentP
   const [textSplitPercent, setTextSplitPercent] = useState(100); // 从黑到白，初始黑色为100%（全黑背景，显示白字）
   const [scrollProgress, setScrollProgress] = useState(0); // 0-1，用于抽屉动画
   const [animationKey, setAnimationKey] = useState(0); // 用于强制重新渲染动画
+  const [heroOpacity, setHeroOpacity] = useState(0); // 200vh-300vh 背景从 0->1
 
   const getAnimationClass = () => {
     if (previousPage === null) {
@@ -83,7 +84,15 @@ function Conclusion({ onScrollProgress, onBoundaryScroll, previousPage, currentP
         setTextSplitPercent(finalPercent);
       }
     }
-  }, [isPageVisible, onScrollProgress]);
+
+    // Hero 背景透明度：基于 scrollBottom = scrollTop + clientHeight
+    // 当 scrollBottom 在 [200vh, 300vh] 线性映射到 [0, 1]
+    const scrollBottom = scrollTop + clientHeight;
+    const start = 2 * clientHeight;   // 200vh
+    const end = 2.6 * clientHeight;     // 300vh
+    const ratio = Math.max(0, Math.min(1, (scrollBottom - start) / (end - start)));
+    setHeroOpacity(ratio);
+  }, [isPageVisible, onScrollProgress, onIndicatorProgress]);
 
   // 平滑滚动到指定位置（仅用于鼠标滚轮）
   const animationRef = useRef(null);
@@ -167,7 +176,7 @@ function Conclusion({ onScrollProgress, onBoundaryScroll, previousPage, currentP
       if (onBoundaryScroll) onBoundaryScroll('up');
       return;
     }
-    // 移除向下滚动的边界检测
+    // 移除向下滚动边界检测
     
     const scrollAmount = deltaY * 1.8; 
     const target = Math.max(0, Math.min(scrollHeight - clientHeight, scrollTop + scrollAmount));
@@ -246,6 +255,7 @@ function Conclusion({ onScrollProgress, onBoundaryScroll, previousPage, currentP
 
         {/* Hero block - 在200vh-260vh位置，非sticky内容，高度60vh */}
         <div className="hero-block">
+          <div className="hero-bg" style={{ opacity: heroOpacity }} />
           <h1 className="hero-title">心在旷野</h1>
           <div className="hero-subtitle">天苍苍，野茫茫<br />风吹草低见牛羊</div>
         </div>

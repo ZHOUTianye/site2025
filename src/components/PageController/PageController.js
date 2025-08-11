@@ -7,6 +7,7 @@ import Learning from '../Learning/Learning';
 import Story from '../Story/Story';
 import Gallery from '../Gallery/Gallery';
 import Conclusion from '../Conclusion/Conclusion';
+import NavigationMenu from '../NavigationMenu/NavigationMenu';
 import './PageController.css';
 
 const PageController = () => {
@@ -324,21 +325,27 @@ const PageController = () => {
 
   return (
     <>
-      {/* 常驻语言切换按钮 - 移到容器外面 */}
-      <div className="global-language-switcher">
-        <button 
-          className="global-lang-btn"
-          onClick={() => handleLanguageSwitch('en')}
-        >
-          Eng
-        </button>
-        <button 
-          className="global-lang-btn"
-          onClick={() => handleLanguageSwitch('es')}
-        >
-          Esp
-        </button>
-      </div>
+      {/* 根据页面显示不同的按钮 */}
+      {currentPage < 2 ? (
+        // 前两页（Welcome和Sayhi）显示语言切换按钮
+        <div className="global-language-switcher">
+          <button 
+            className="global-lang-btn"
+            onClick={() => handleLanguageSwitch('en')}
+          >
+            Eng
+          </button>
+          <button 
+            className="global-lang-btn"
+            onClick={() => handleLanguageSwitch('es')}
+          >
+            Esp
+          </button>
+        </div>
+      ) : (
+        // 第三页开始显示导航菜单
+        <NavigationMenu />
+      )}
 
       {/* 页面指示器 / 回到顶部（Conclusion 页面 >90% 进度） */}
       <div className="page-indicator">

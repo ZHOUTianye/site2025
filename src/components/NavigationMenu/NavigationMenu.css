@@ -1,0 +1,499 @@
+/* 背景遮罩：毛玻璃 + 变暗 + 拦截点击 */
+.menu-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 1500; /* 低于菜单容器（2000），高于页面内容 */
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+.menu-backdrop.active {
+  opacity: 1;
+  pointer-events: auto; /* 拦截点击 */
+}
+.menu-backdrop.closing {
+  opacity: 0;
+  pointer-events: auto;
+}
+
+/* 禁止页面滚动：通过给 body 添加类 menu-open 来实现 */
+body.menu-open {
+  overflow: hidden;
+}
+
+/* 确保菜单始终位于遮罩之上 */
+.navigation-menu {
+  position: fixed;
+  top: 4rem;
+  right: 4rem;
+  z-index: 2000;
+}
+
+/* 汉堡菜单按钮 - 现在是容器元素 */
+.hamburger-menu {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  background-color: #cccccc;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease, border-radius 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  transform-origin: top right;
+}
+
+.hamburger-menu:hover {
+  background-color: #bbbbbb;
+  /* transform: scale(1.05); */
+}
+
+.hamburger-menu.active {
+  background-color: #f8f8f8;
+  width: 24rem;
+  /* 使用关键帧控制高度变化，避免直接写 height:auto 影响动画起点 */
+  border-radius: 1.2rem;
+  box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.15);
+  padding: 1.5rem 1.5rem 0.5rem 1.5rem;
+  align-items: flex-start;
+  animation: expandFromTopRight 0.3s ease forwards;
+}
+
+/* 汉堡菜单线条容器 */
+.hamburger-lines {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.4rem;
+  transition: all 0.3s ease;
+  position: absolute;
+  top: 1.2rem;
+  left: 1rem;
+}
+
+.hamburger-menu.active .hamburger-lines {
+  top: 1.5rem;
+  left: 1.5rem;
+}
+
+/* 汉堡菜单线条 */
+.hamburger-line {
+  width: 2rem;
+  height: 0.2rem;
+  background-color: #555555;
+  transition: all 0.3s ease;
+  border-radius: 0.1rem;
+}
+
+/* .hamburger-line.middle-line {
+  background-color: #0066cc;
+} */
+
+/* 激活状态的动画（交叉 X） */
+.hamburger-menu.active .top-line {
+  transform: rotate(45deg) translate(0.5rem, 0.5rem);
+}
+
+.hamburger-menu.active .middle-line {
+  opacity: 0;
+}
+
+.hamburger-menu.active .bottom-line {
+  transform: rotate(-45deg) translate(0.5rem, -0.5rem);
+}
+
+/* 快捷入口菜单内容（关闭时不展示） */
+.quick-access-content {
+  display: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease;
+  /* margin-top: 1rem; */
+  width: 100%;
+}
+
+.hamburger-menu.active .quick-access-content {
+  display: block;
+  opacity: 1;
+  visibility: visible;
+  animation: fadeInContent 0.2s ease 0.15s both;
+}
+
+/* 菜单头部 */
+.menu-header {
+  padding: 0 0 1rem;
+  text-align: right;
+}
+
+.menu-header h3 {
+  margin: 0;
+  font-size: 1.4rem;
+  color: #999999;
+  font-weight: 400;
+}
+
+/* 主要导航链接 */
+.main-navigation {
+  padding: 0 0 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.nav-link {
+  display: block;
+  color: #333333;
+  text-decoration: none;
+  font-size: 2rem;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.nav-link:hover {
+  color: #000000;
+}
+
+/* 语言选择区域 */
+.language-section {
+  margin-top: 1rem;
+  padding: 0 0 1.5rem;
+  display: flex;
+  gap: 2rem;
+}
+
+.language-option {
+  color: #666666;
+  font-size: 1.4rem;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  font-family: 'Noto Sans SC', sans-serif;
+}
+
+.language-option:hover {
+  color: #333333;
+}
+
+.language-option.active {
+  color: #333333;
+  font-weight: 500;
+}
+
+/* 操作按钮区域 */
+.action-section {
+  padding: 0 0 0.5rem;
+  display: flex;
+  gap: 1.5rem;
+}
+
+.action-btn {
+  background: none;
+  border: none;
+  color: #666666;
+  font-size: 1.4rem;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  margin-top: 0.5rem;
+  padding: 0;
+  margin: auto;
+}
+
+.action-btn:hover {
+  color: #333333;
+}
+
+.register-btn {
+  font-weight: 500;
+}
+
+.login-btn {
+  font-weight: 500;
+}
+
+/* 点击区域覆盖整个元素；展开后不遮挡内部点击 */
+.menu-toggle-button {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  z-index: 1;
+}
+.hamburger-menu.active .menu-toggle-button {
+  display: none;
+}
+
+/* 展开动画：从右上到左下（控制 width/height） */
+@keyframes expandFromTopRight {
+  0% {
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+  }
+  60% {
+    width: 24rem;
+    height: 18rem;
+    border-radius: 1.2rem;
+  }
+  100% {
+    width: 24rem;
+    height: 27rem;
+    border-radius: 1.2rem;
+  }
+}
+
+/* 内容淡入 */
+@keyframes fadeInContent {
+  from { opacity: 0; transform: translateY(-0.6rem); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 追加：展开状态隐藏汉堡线条颜色，并添加 X 关闭按钮 */
+.hamburger-menu.active .hamburger-line {
+  background-color: #f8f8f8; /* 与容器背景同色以隐藏 */
+}
+
+.close-icon {
+  position: absolute;
+  top: 1.2rem;
+  left: 1rem;
+  width: 2rem;
+  height: 2rem;
+  z-index: 2;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.close-icon::before,
+.close-icon::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 2rem;
+  height: 0.2rem;
+  background-color: #333333;
+  border-radius: 0.1rem;
+  transform-origin: center;
+}
+
+.close-icon::before {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.close-icon::after {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+/* 关闭动画：容器收拢与内容淡出，从左下向右上回收（与展开相反） */
+.hamburger-menu.closing {
+  animation: collapseToTopRight 0.3s ease forwards;
+}
+.hamburger-menu.closing .quick-access-content {
+  animation: fadeOutContent 0.18s ease both;
+}
+
+@keyframes collapseToTopRight {
+  0% {
+    width: 24rem;
+    height: 27rem;
+    border-radius: 1.2rem;
+  }
+  40% {
+    width: 24rem;
+    height: 16rem;
+    border-radius: 1.2rem;
+  }
+  100% {
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+  }
+}
+
+@keyframes fadeOutContent {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(-0.6rem); }
+}
+
+/* 中断点关闭动画 */
+@keyframes collapseToTopRightMd {
+  0% {
+    width: 22rem;
+    height: 28rem;
+    border-radius: 1.2rem;
+  }
+  40% {
+    width: 22rem;
+    height: 15rem;
+    border-radius: 1.2rem;
+  }
+  100% {
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 50%;
+  }
+}
+
+/* 小断点关闭动画 */
+@keyframes collapseToTopRightSm {
+  0% {
+    width: 20rem;
+    height: 26rem;
+    border-radius: 1.2rem;
+  }
+  40% {
+    width: 20rem;
+    height: 14rem;
+    border-radius: 1.2rem;
+  }
+  100% {
+    width: 3.2rem;
+    height: 3.2rem;
+    border-radius: 50%;
+  }
+}
+
+/* 响应式设计 */
+@media (max-width: 1440px) {
+  .navigation-menu {
+    top: 2rem;
+    right: 2rem;
+  }
+  
+  .hamburger-menu {
+    width: 3.5rem;
+    height: 3.5rem;
+  }
+  
+  .hamburger-menu.active {
+    width: 22rem;
+    padding: 1.5rem 1.5rem 0.5rem 1.5rem;
+    animation-name: expandFromTopRightMd;
+  }
+  
+  .hamburger-line {
+    width: 1.8rem;
+    height: 0.18rem;
+  }
+  .close-icon {
+    top: 1.1rem;
+    left: 1rem;
+    width: 1.8rem;
+    height: 1.8rem;
+  }
+  .close-icon::before,
+  .close-icon::after {
+    width: 1.8rem;
+    height: 0.18rem;
+  }
+}
+
+@keyframes expandFromTopRightMd {
+  0% {
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 50%;
+  }
+  60% {
+    width: 22rem;
+    height: 16rem;
+    border-radius: 1.2rem;
+  }
+  100% {
+    width: 22rem;
+    height: 28rem;
+    border-radius: 1.2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .navigation-menu {
+    top: 1.5rem;
+    right: 1.5rem;
+  }
+  
+  .hamburger-menu {
+    width: 3.2rem;
+    height: 3.2rem;
+  }
+  
+  .hamburger-menu.active {
+    width: 20rem;
+    padding: 1.2rem 1.2rem 0.3rem 1.2rem;
+    animation-name: expandFromTopRightSm;
+  }
+  
+  .hamburger-line {
+    width: 1.6rem;
+    height: 0.16rem;
+  }
+  
+  .menu-header {
+    padding: 0 0 1rem;
+  }
+  
+  .main-navigation,
+  .language-section {
+    padding: 0 0 1.2rem;
+  }
+  
+  .action-section {
+    padding: 0 0 0.3rem;
+  }
+  
+  .menu-header h3 {
+    font-size: 1.3rem;
+  }
+  
+  .nav-link {
+    font-size: 1.4rem;
+  }
+  
+  .language-option {
+    font-size: 1.3rem;
+  }
+  
+  .action-btn {
+    font-size: 1.3rem;
+  }
+  .close-icon {
+    top: 1rem;
+    left: 0.9rem;
+    width: 1.6rem;
+    height: 1.6rem;
+  }
+  .close-icon::before,
+  .close-icon::after {
+    width: 1.6rem;
+    height: 0.16rem;
+  }
+}
+
+@keyframes expandFromTopRightSm {
+  0% {
+    width: 3.2rem;
+    height: 3.2rem;
+    border-radius: 50%;
+  }
+  60% {
+    width: 20rem;
+    height: 15rem;
+    border-radius: 1.2rem;
+  }
+  100% {
+    width: 20rem;
+    height: 26rem;
+    border-radius: 1.2rem;
+  }
+} 

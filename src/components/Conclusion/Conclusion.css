@@ -61,14 +61,25 @@
   align-items: flex-start;
   text-align: center; 
   width: 100%; 
-  max-width: 1200px; 
+  /* max-width: 1200px;  */
   margin: 0 auto;
-  padding: 0 4rem;
+  padding-left: 30rem;
+  /* padding: 0 4rem; */
   position: relative;
   z-index: 5;
+
 }
-.hero-title { font-size: 6rem; font-weight: 300; margin: 2rem 0; color: #111; }
-.hero-subtitle { font-size: 3rem; color: #222; line-height: 1.6; }
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background: 
+    url('../../../public/img/conclusion.jpg') no-repeat center center;
+  background-size: 100% 260%;
+  z-index: -1; /* 位于文字之下 */
+  pointer-events: none; /* 不影响交互 */
+}
+.hero-title { font-size: 6rem; font-weight: 300; margin: 0 0 2rem 0; color: #ffffff; opacity: 1 !important;}
+.hero-subtitle { font-size: 3rem; color: #eeeeee; line-height: 1.6; opacity: 0.9 !important;}
 
 .conclusion-text-split { position: relative; width: 100%; flex: 1; }
 .conclusion-layer { position: absolute; inset: 0; display:flex; align-items:center; justify-content:center; }
@@ -133,11 +144,11 @@
 .drawer-subtitle { font-size: 3rem; color: #222; line-height: 1.6; }
 
 .drawer-search { display: flex; align-items: center; gap: 1rem; }
-.drawer-search-input { flex: 1; height: 3.6rem; border-radius: 0; border: 1px solid #ddd; padding: 0 1rem; font-size: 1.6rem; }
+.drawer-search-input { flex: 1; height: 3.6rem; border-radius: 0; border: 1px solid #ddd; padding: 0 1rem; font-size: 1.6rem; width: 50rem;}
 .drawer-search-icon { font-size: 1.8rem; }
 
 .drawer-links { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; padding: 2rem 10% 3rem 10%; border-top: 1px solid #eee; flex-grow: 1; }
-.drawer-col-title { font-weight: 600; margin-bottom: 1.8rem; color: #222; font-size: 2.5rem; }
+.drawer-col-title { margin-bottom: 1.8rem; color: #222; font-size: 2.5rem; }
 .drawer-links a { display: block; color: #444; margin: 1.6rem 0; text-decoration: none; font-size: 1.9rem; }
 .drawer-info-row { display: flex; justify-content: space-between; align-items: center; padding: 1.2rem 10%; border-top: 1px solid #eaeaea; background: #f7f7f7; color: #666; }
 .drawer-info-left { font-size: 1.4rem; }
