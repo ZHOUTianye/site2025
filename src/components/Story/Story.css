@@ -236,14 +236,14 @@
 .trapezoid-left {
   left: 0;
   clip-path: polygon(0 0, 66.67% 0, 33.33% 100%, 0 100%);
-  background: url('/img/banners/banner4.jpg') no-repeat center center;
+  background: url('https://raw.githubusercontent.com/ZHOUTianye/site2025/main/public/img/banners/banner4.jpg') no-repeat center center;
   background-size: cover;
 }
 
 .trapezoid-right {
   right: 0;
   clip-path: polygon(66.67% 0, 100% 0, 100% 100%, 33.33% 100%);
-  background: url('/img/banners/banner5.jpg') no-repeat center center;
+  background: url('https://raw.githubusercontent.com/ZHOUTianye/site2025/main/public/img/banners/banner5.jpg') no-repeat center center;
   background-size: cover;
 }
 
@@ -296,10 +296,10 @@
 .story-swiper .swiper-slide:nth-child(1) {
   /* 使用格式兼容的背景类 */
   background-image: 
-    url('../../../public/img/banners/banner1.webp'),
-    url('../../../public/img/banners/banner1.png'),
-    url('../../../public/img/banners/banner1.jpg'),
-    url('../../../public/img/banners/banner1.jpeg');
+    url('https://raw.githubusercontent.com/ZHOUTianye/site2025/main/public/img/banners/banner1.webp'),
+    url('https://raw.githubusercontent.com/ZHOUTianye/site2025/main/public/img/banners/banner1.png'),
+    url('https://raw.githubusercontent.com/ZHOUTianye/site2025/main/public/img/banners/banner1.jpg'),
+    url('https://raw.githubusercontent.com/ZHOUTianye/site2025/main/public/img/banners/banner1.jpeg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -308,10 +308,10 @@
 .story-swiper .swiper-slide:nth-child(2) {
   /* 使用格式兼容的背景类 */
   background-image: 
-    url('../../../public/img/banners/banner2.webp'),
-    url('../../../public/img/banners/banner2.png'),
-    url('../../../public/img/banners/banner2.jpg'),
-    url('../../../public/img/banners/banner2.jpeg');
+    url('https://raw.githubusercontent.com/ZHOUTianye/site2025/main/public/img/banners/banner2.webp'),
+    url('https://raw.githubusercontent.com/ZHOUTianye/site2025/main/public/img/banners/banner2.png'),
+    url('https://raw.githubusercontent.com/ZHOUTianye/site2025/main/public/img/banners/banner2.jpg'),
+    url('https://raw.githubusercontent.com/ZHOUTianye/site2025/main/public/img/banners/banner2.jpeg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -320,10 +320,10 @@
 .story-swiper .swiper-slide:nth-child(3) {
   /* 使用格式兼容的背景类 */
   background-image: 
-    url('../../../public/img/banners/banner3.webp'),
-    url('../../../public/img/banners/banner3.png'),
-    url('../../../public/img/banners/banner3.jpg'),
-    url('../../../public/img/banners/banner3.jpeg');
+    url('https://raw.githubusercontent.com/ZHOUTianye/site2025/main/public/img/banners/banner3.webp'),
+    url('https://raw.githubusercontent.com/ZHOUTianye/site2025/main/public/img/banners/banner3.png'),
+    url('https://raw.githubusercontent.com/ZHOUTianye/site2025/main/public/img/banners/banner3.jpg'),
+    url('https://raw.githubusercontent.com/ZHOUTianye/site2025/main/public/img/banners/banner3.jpeg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

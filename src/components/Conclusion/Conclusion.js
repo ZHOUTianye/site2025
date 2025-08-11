@@ -311,7 +311,7 @@ function Conclusion({ onScrollProgress, onBoundaryScroll, previousPage, currentP
               </div>
 
               <div className="drawer-legalbar">
-                <div className="drawer-copy">版权所有 © 2023-2025 周天野</div>
+                <div className="drawer-copy">版权所有 © 2023-2025 周天野 版本号:1.0.50， 更新日期:2025-08-11</div>
                 <div className="drawer-legal-links">
                   <a>联系我</a>
                   <a>隐私政策</a>
