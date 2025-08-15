@@ -1,13 +1,13 @@
 # 欢迎您来到我的个人主页的代码仓库！
-您可以前往tianyezhou.com访问正式版，或者前往https://tianyezhou-mainpage-test-ver.vercel.app 体验测试版。
+您可以前往https://tianyezhou.com 访问正式版，或者前往https://tianyezhou-mainpage-test-ver.vercel.app 体验测试版。
 当前网站仍在开发中，基础功能和链接尚不可用，敬请谅解。
 
 # Welcome to the raw code page of my homepage!
-You may visit tianyezhou.com for published version. Alternative beta version is available on https://tianyezhou-mainpage-test-ver.vercel.app/.
+You may visit https://tianyezhou.com for published version. Alternative beta version is available on https://tianyezhou-mainpage-test-ver.vercel.app/.
 Current page is still developing, basic functions & links are not in use, thank you for your understanding.
 
 # ¡Bienvenido al almacén de código de mi página personal!
-Puede ir a tianyezhou.com para acceder a la versión oficial o ir a https://tianyezhou-mainpage-test-ver.vercel.app/ Experimente la versión beta.
+Puede ir a https://tianyezhou.com para acceder a la versión oficial o ir a https://tianyezhou-mainpage-test-ver.vercel.app/ Experimente la versión beta.
 El sitio web todavía está en desarrollo, las funciones básicas y los enlaces aún no están disponibles, por favor entienda.
 
 
