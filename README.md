@@ -1,5 +1,5 @@
 # 欢迎您来到我的个人主页的代码仓库！
-# 您可以前往tianyezhou.com访问正式版，或者前往https://tianyezhou-mainpage-test-ver.vercel.app/体验测试版。
+# 您可以前往tianyezhou.com访问正式版，或者前往https://tianyezhou-mainpage-test-ver.vercel.app 体验测试版。
 # 当前网站仍在开发中，基础功能和链接尚不可用，敬请谅解。
 
 # Welcome to the raw code page of my homepage!
